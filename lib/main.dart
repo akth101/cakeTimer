@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primaryColor: Colors.blue,
       ),
-      home: Scaffold(
+      home: const Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -60,7 +60,7 @@ class tmpWidget extends StatelessWidget {
       width: screenWidth / 3 - screenWidth * 0.01,
       height: screenHeight / 2 - screenWidth * 0.01,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.red,
       ),
       child: Image.asset('assets/images/cake1.jpg'),
