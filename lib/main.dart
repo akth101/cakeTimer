@@ -63,7 +63,7 @@ class tmpWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.red,
       ),
-      child: Image.asset('assets/images/cake1.jpg'),
+      child: Image.asset('assets/images/cake.jpg'),
     );
   }
 }
