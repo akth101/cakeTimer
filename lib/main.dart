@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timer/timer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,9 +62,9 @@ class tmpWidget extends StatelessWidget {
       height: screenHeight / 2 - screenWidth * 0.01,
       alignment: Alignment.center,
       decoration: const BoxDecoration(
-        color: Colors.red,
+        color: Colors.lightGreen,
       ),
-      child: Image.asset('assets/images/cake.jpg'),
+      child: const cakeTimer(),
     );
   }
 }
