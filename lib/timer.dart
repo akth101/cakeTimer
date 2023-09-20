@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import "image.dart";
 
 class cakeTimer extends StatefulWidget {
   const cakeTimer({super.key});
@@ -15,7 +16,7 @@ class _cakeTimerState extends State<cakeTimer> {
   Timer? currentTimer;
   Timer? sixHoursLaterTimer;
 
-  void saveCurrentTime() {
+  void startTimers() {
     // 현재 시각을 얻어와 startTime 변수에 저장.
     DateTime now = DateTime.now();
     setState(() {
@@ -81,29 +82,19 @@ class _cakeTimerState extends State<cakeTimer> {
   }
 
   @override
+
+  //사진이 1번 눌리면 startTimers 실행
+  //사진이 이미 1번 눌린 상태에서 1번 더 눌리면 resetTimers 실행
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ElevatedButton(
-            onPressed: saveCurrentTime,
-            child: const Text('해동 시작'),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: resetTimers,
-            child: const Text('판매 완료'),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '해동 시작 시간: $startTime',
-            style: const TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '해동 경과 시간: $elapsedTime',
-            style: const TextStyle(fontSize: 18),
+            onPressed: () {
+              displayAndClickImage();
+            },
+            child: const Text('사진 추가'),
           ),
           const SizedBox(height: 20),
           Text(

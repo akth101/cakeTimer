@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timer/timer.dart';
+import "timer.dart";
+import "image.dart";
 
 void main() {
   runApp(const MyApp());
