@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import "image.dart";
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class cakeTimer extends StatefulWidget {
   const cakeTimer({super.key});
@@ -15,6 +16,7 @@ class _cakeTimerState extends State<cakeTimer> {
   String remainingTime = ''; //해동 완료까지 남은 시간
   Timer? currentTimer;
   Timer? sixHoursLaterTimer;
+
 
   void startTimers() {
     // 현재 시각을 얻어와 startTime 변수에 저장.
@@ -42,7 +44,8 @@ class _cakeTimerState extends State<cakeTimer> {
 
       //시간 차이를 HH:mm:ss 형태로 포맷팅
       String formattedDifference =
-          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString()
+          .padLeft(2, '0')}';
 
       setState(() {
         elapsedTime = formattedDifference;
@@ -62,7 +65,8 @@ class _cakeTimerState extends State<cakeTimer> {
 
       // 시간 차이를 HH:mm:ss 형식으로 포맷팅
       String formattedTimeDifference =
-          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString()
+          .padLeft(2, '0')}';
 
       setState(() {
         remainingTime = formattedTimeDifference;
@@ -81,28 +85,108 @@ class _cakeTimerState extends State<cakeTimer> {
     });
   }
 
-  @override
+  XFile? _image; //이미지를 담을 변수 선언
+  final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
 
+  Future getImage(ImageSource imageSource) async {
+    //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+      });
+    }
+  }
+
+  @override
+  //해야 될 것들
   //사진이 1번 눌리면 startTimers 실행
   //사진이 이미 1번 눌린 상태에서 1번 더 눌리면 resetTimers 실행
   Widget build(BuildContext context) {
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    double screenWidth = mediaQueryData.size.width;
+    double screenHeight = mediaQueryData.size.height;
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () {
-              displayAndClickImage();
-            },
-            child: const Text('사진 추가'),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '해동 완료까지 남은 시간 : $remainingTime',
-            style: const TextStyle(fontSize: 18),
-          ),
-        ],
+      child: SingleChildScrollView(
+       child: Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+           _photoArea(screenWidth, screenHeight),
+           SizedBox(height : screenWidth / 50),
+           _imageButton(),
+           SizedBox(height : screenWidth / 50),
+           Text(
+             '해동 완료까지 남은 시간 : $remainingTime',
+             style: const TextStyle(fontSize: 18),
+           ),
+         ],
+        ),
       ),
+    );
+  }
+
+  int isPhotoTouched = 0;
+
+  Widget _photoArea(double screenWidth, double screenHeight) {
+    double imageWidth = (screenWidth / 3 - screenWidth * 0.01) / 2;
+    double imageHeight = (screenHeight / 2 - screenWidth * 0.01) / 2;
+
+    return _image != null
+          ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                      if (isPhotoTouched == 0) {
+                      startTimers();
+                      isPhotoTouched = 1;
+                      } else if (isPhotoTouched == 1) {
+                      resetTimers();
+                     isPhotoTouched = 0;
+                 }
+               });
+              },
+              child: Container(
+                 width: imageWidth,
+                height: imageHeight,
+                child: Image.file(File(_image!.path)),
+            ))
+            : GestureDetector(
+                onTap: () {
+                  setState(() {
+                    getImage(ImageSource.camera);
+                  });
+                },
+               child: Container(
+                 width: imageWidth,
+                 height: imageHeight,
+                 color: Colors.grey,
+        ));
+  }
+
+  // Container(
+  // width: imageWidth,
+  // height: imageHeight,
+  // color: Colors.grey,
+  // );
+
+
+  Widget _imageButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            getImage(ImageSource.camera); //getImage 함수를 호출해서 카메라로 찍은 사진 가져오기
+          },
+          child: Text("카메라"),
+        ),
+        SizedBox(width: 30),
+        ElevatedButton(
+          onPressed: () {
+            getImage(ImageSource.gallery); //getImage 함수를 호출해서 갤러리에서 사진 가져오기
+          },
+          child: Text("갤러리"),
+        ),
+      ],
     );
   }
 }
