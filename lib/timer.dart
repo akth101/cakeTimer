@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
-class cakeTimer extends StatefulWidget {
-  const cakeTimer({super.key});
+class TimerFunction extends StatefulWidget {
+  const TimerFunction({super.key});
 
   @override
-  _cakeTimerState createState() => _cakeTimerState();
+  TimerFunctionState createState() => TimerFunctionState();
 }
 
-class _cakeTimerState extends State<cakeTimer> {
+class TimerFunctionState extends State<TimerFunction> {
   String startTime = ''; //해동 시작 시간
   String elapsedTime = ''; //해동 경과 시간
   String remainingTime = ''; //해동 완료까지 남은 시간
-  Timer? currentTimer;
-  Timer? sixHoursLaterTimer;
+  Timer? currentTimer; //타이머
+  Timer? sixHoursLaterTimer; //타이머
 
+
+  //Timer function
 
   void startTimers() {
     // 현재 시각을 얻어와 startTime 변수에 저장.
@@ -44,8 +47,7 @@ class _cakeTimerState extends State<cakeTimer> {
 
       //시간 차이를 HH:mm:ss 형태로 포맷팅
       String formattedDifference =
-          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString()
-          .padLeft(2, '0')}';
+          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
       setState(() {
         elapsedTime = formattedDifference;
@@ -65,8 +67,7 @@ class _cakeTimerState extends State<cakeTimer> {
 
       // 시간 차이를 HH:mm:ss 형식으로 포맷팅
       String formattedTimeDifference =
-          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString()
-          .padLeft(2, '0')}';
+          '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
       setState(() {
         remainingTime = formattedTimeDifference;
@@ -85,7 +86,11 @@ class _cakeTimerState extends State<cakeTimer> {
     });
   }
 
-  XFile? _image; //이미지를 담을 변수 선언
+  //image Function
+
+  XFile? _pickedFile;
+  CroppedFile? _croppedFile;
+
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
 
   Future getImage(ImageSource imageSource) async {
@@ -93,37 +98,53 @@ class _cakeTimerState extends State<cakeTimer> {
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
       setState(() {
-        _image = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
+        _pickedFile = XFile(pickedFile.path); //가져온 이미지를 _image에 저장
       });
+      _cropImage();
     }
   }
 
-  @override
-  //해야 될 것들
-  //사진이 1번 눌리면 startTimers 실행
-  //사진이 이미 1번 눌린 상태에서 1번 더 눌리면 resetTimers 실행
-  Widget build(BuildContext context) {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    double screenWidth = mediaQueryData.size.width;
-    double screenHeight = mediaQueryData.size.height;
-    return Center(
-      child: SingleChildScrollView(
-       child: Column(
-         mainAxisAlignment: MainAxisAlignment.center,
-         children: [
-           _photoArea(screenWidth, screenHeight),
-           SizedBox(height : screenWidth / 50),
-           _imageButton(),
-           SizedBox(height : screenWidth / 50),
-           Text(
-             '해동 완료까지 남은 시간 : $remainingTime',
-             style: const TextStyle(fontSize: 18),
-           ),
-         ],
-        ),
-      ),
-    );
+   Future<void> _cropImage() async {
+    if (_pickedFile != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: _pickedFile!.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: CropperPresentStyle.dialog,
+            boundary: const CroppieBoundary(
+              width: 520,
+              height: 520,
+            ),
+            viewPort:
+                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+            enableExif: true,
+            enableZoom: true,
+            showZoomer: true,
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          _croppedFile = croppedFile;
+        });
+      }
+    }
   }
+
+
+
 
   int isPhotoTouched = 0;
 
@@ -131,43 +152,36 @@ class _cakeTimerState extends State<cakeTimer> {
     double imageWidth = (screenWidth / 3 - screenWidth * 0.01) / 2;
     double imageHeight = (screenHeight / 2 - screenWidth * 0.01) / 2;
 
-    return _image != null
-          ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                      if (isPhotoTouched == 0) {
-                      startTimers();
-                      isPhotoTouched = 1;
-                      } else if (isPhotoTouched == 1) {
-                      resetTimers();
-                     isPhotoTouched = 0;
-                 }
-               });
-              },
-              child: Container(
-                 width: imageWidth,
-                height: imageHeight,
-                child: Image.file(File(_image!.path)),
+    return _croppedFile != null
+        ? GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isPhotoTouched == 0) {
+                  startTimers();
+                  isPhotoTouched = 1;
+                } else if (isPhotoTouched == 1) {
+                  resetTimers();
+                  isPhotoTouched = 0;
+                }
+              });
+            },
+            child: Container(
+              width: imageWidth,
+              height: imageHeight,
+              child: Image.file(File(_croppedFile!.path)),
             ))
-            : GestureDetector(
-                onTap: () {
-                  setState(() {
-                    getImage(ImageSource.camera);
-                  });
-                },
-               child: Container(
-                 width: imageWidth,
-                 height: imageHeight,
-                 color: Colors.grey,
-        ));
+        : GestureDetector(
+            onTap: () {
+              setState(() {
+                getImage(ImageSource.gallery);
+              });
+            },
+            child: Container(
+              width: imageWidth,
+              height: imageHeight,
+              color: Colors.grey,
+            ));
   }
-
-  // Container(
-  // width: imageWidth,
-  // height: imageHeight,
-  // color: Colors.grey,
-  // );
-
 
   Widget _imageButton() {
     return Row(
@@ -177,16 +191,40 @@ class _cakeTimerState extends State<cakeTimer> {
           onPressed: () {
             getImage(ImageSource.camera); //getImage 함수를 호출해서 카메라로 찍은 사진 가져오기
           },
-          child: Text("카메라"),
+          child: const Text("camera"),
         ),
-        SizedBox(width: 30),
+        const SizedBox(width: 30),
         ElevatedButton(
           onPressed: () {
             getImage(ImageSource.gallery); //getImage 함수를 호출해서 갤러리에서 사진 가져오기
           },
-          child: Text("갤러리"),
+          child: const Text("gallery"),
         ),
       ],
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    double screenWidth = mediaQueryData.size.width;
+    double screenHeight = mediaQueryData.size.height;
+    return Center(
+      // child: SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _photoArea(screenWidth, screenHeight),
+          SizedBox(height: screenWidth / 50),
+          _imageButton(),
+          SizedBox(height: screenWidth / 50),
+          Text(
+            'remaining time : $remainingTime',
+            style: const TextStyle(fontSize: 20),
+          ),
+        ],
+      ),
+    );
+  }
 }
+

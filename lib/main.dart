@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timer/timer.dart';
+import 'cakeTimerUI.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,7 +64,7 @@ class tmpWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.lightGreen,
       ),
-      child: const cakeTimer(),
+      child: const CakeTimerUI(),
     );
   }
 }
