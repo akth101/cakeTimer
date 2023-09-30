@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'cakeTimerUI.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
