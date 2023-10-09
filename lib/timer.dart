@@ -3,23 +3,37 @@ import 'dart:async';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class TimerFunction extends StatefulWidget {
-  const TimerFunction({super.key});
+
+  final int value3;
+  //const TimerFunction({super.key});
+
+  const TimerFunction({Key? key, required this.value3}) : super(key: key);
 
   @override
   TimerFunctionState createState() => TimerFunctionState();
 }
 
 class TimerFunctionState extends State<TimerFunction> {
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////Timer function//////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
   String startTime = ''; //해동 시작 시간
   String elapsedTime = ''; //해동 경과 시간
   String remainingTime = ''; //해동 완료까지 남은 시간
   Timer? currentTimer; //타이머
   Timer? sixHoursLaterTimer; //타이머
-
-
-  //Timer function
 
   void startTimers() {
     // 현재 시각을 얻어와 startTime 변수에 저장.
@@ -86,10 +100,14 @@ class TimerFunctionState extends State<TimerFunction> {
     });
   }
 
-  //image Function
+  //////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////Image function//////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
 
   XFile? _pickedFile;
+  XFile? _savedFile;
   CroppedFile? _croppedFile;
+  late SharedPreferences _prefs;
 
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
 
@@ -103,6 +121,25 @@ class TimerFunctionState extends State<TimerFunction> {
       _cropImage();
     }
   }
+
+    Future<void> _saveImagePath(String? imagePath) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('imagePath${widget.value3}', imagePath!);
+  }
+
+  Future<String?> _loadImagePath() async {
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs.getString('imagePath${widget.value3}');
+  }
+
+  Future<void> _loadImage() async {
+    String? imagePath = await _loadImagePath();
+    if (imagePath != null) {
+      setState(() {
+        _savedFile = XFile(imagePath);
+      });
+    }
+  } 
 
    Future<void> _cropImage() async {
     if (_pickedFile != null) {
@@ -138,13 +175,34 @@ class TimerFunctionState extends State<TimerFunction> {
       if (croppedFile != null) {
         setState(() {
           _croppedFile = croppedFile;
+          String? imagePath = _croppedFile != null ? _croppedFile!.path : null;  //이거 삼항 연산자임
+          _saveImagePath(imagePath);
         });
       }
     }
   }
 
-
-
+  Widget croppedOrSaved(double imageWidth, double imageHeight) {
+    if (_croppedFile != null && _savedFile != null) {
+      return Container(
+        width: imageWidth,
+        height: imageHeight,
+        child: Image.file(File(_croppedFile!.path)),
+      );
+    }
+    if (_croppedFile != null && _savedFile == null) {
+      return Container(
+        width: imageWidth,
+        height: imageHeight,
+        child: Image.file(File(_croppedFile!.path)),
+      );
+    }
+    return Container(
+      width: imageWidth,
+      height: imageHeight,
+      child: Image.file(File(_savedFile!.path)),
+      );
+  }
 
   int isPhotoTouched = 0;
 
@@ -152,7 +210,7 @@ class TimerFunctionState extends State<TimerFunction> {
     double imageWidth = (screenWidth / 3 - screenWidth * 0.01) / 2;
     double imageHeight = (screenHeight / 2 - screenWidth * 0.01) / 2;
 
-    return _croppedFile != null
+    return (_croppedFile != null || _savedFile != null)
         ? GestureDetector(
             onTap: () {
               setState(() {
@@ -165,11 +223,8 @@ class TimerFunctionState extends State<TimerFunction> {
                 }
               });
             },
-            child: Container(
-              width: imageWidth,
-              height: imageHeight,
-              child: Image.file(File(_croppedFile!.path)),
-            ))
+            child: croppedOrSaved(imageWidth, imageHeight),
+            )
         : GestureDetector(
             onTap: () {
               setState(() {
@@ -182,6 +237,7 @@ class TimerFunctionState extends State<TimerFunction> {
               color: Colors.grey,
             ));
   }
+ 
 
   Widget _imageButton() {
     return Row(
@@ -222,6 +278,10 @@ class TimerFunctionState extends State<TimerFunction> {
             'remaining time : $remainingTime',
             style: const TextStyle(fontSize: 20),
           ),
+          // Text(
+          //   'value3: ${widget.value3}',
+          //   style: const TextStyle(fontSize:15),
+          // ),
         ],
       ),
     );

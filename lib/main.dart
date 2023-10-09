@@ -28,17 +28,17 @@ class _MyAppState extends State<MyApp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  tmpWidget(),
-                  tmpWidget(),
-                  tmpWidget(),
+                  tmpWidget(value1: 1),
+                  tmpWidget(value1: 2),
+                  tmpWidget(value1: 3),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  tmpWidget(),
-                  tmpWidget(),
-                  tmpWidget(),
+                  tmpWidget(value1 : 4),
+                  tmpWidget(value1 : 5),
+                  tmpWidget(value1 : 6),
                 ],
               ),
             ],
@@ -50,7 +50,11 @@ class _MyAppState extends State<MyApp> {
 }
 
 class tmpWidget extends StatelessWidget {
-  const tmpWidget({super.key});
+
+  final int value1;
+
+  const tmpWidget({super.key, required this.value1});
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,12 @@ class tmpWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.lightGreen,
       ),
-      child: const CakeTimerUI(),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      CakeTimerUI(value2: value1),
+      ],
+    ),
     );
   }
 }
