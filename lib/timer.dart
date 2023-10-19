@@ -4,14 +4,15 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'cakeIndividualSetting.dart';
 
 
 class TimerFunction extends StatefulWidget {
 
-  final int value3;
-  //const TimerFunction({super.key});
+  final int value;
+  //value3를 TimerFunctionState에서 사용하려면 ${widget.value3} 이렇게 사용해야 함.
 
-  const TimerFunction({Key? key, required this.value3}) : super(key: key);
+  const TimerFunction({Key? key, required this.value}) : super(key: key);
 
   @override
   TimerFunctionState createState() => TimerFunctionState();
@@ -108,8 +109,27 @@ class TimerFunctionState extends State<TimerFunction> {
   XFile? _savedFile;
   CroppedFile? _croppedFile;
   late SharedPreferences _prefs;
-
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+
+
+    Future<void> _saveImagePath(String? imagePath) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('imagePath${widget.value}', imagePath!);
+  }
+
+  Future<String?> _loadImagePath() async {
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs.getString('imagePath${widget.value}');
+  }
+
+  Future<void> _loadImage() async {
+    String? imagePath = await _loadImagePath();
+    if (imagePath != null) {
+      setState(() {
+        _savedFile = XFile(imagePath);
+      });
+    }
+  }
 
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
@@ -121,25 +141,6 @@ class TimerFunctionState extends State<TimerFunction> {
       _cropImage();
     }
   }
-
-    Future<void> _saveImagePath(String? imagePath) async {
-    _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString('imagePath${widget.value3}', imagePath!);
-  }
-
-  Future<String?> _loadImagePath() async {
-    _prefs = await SharedPreferences.getInstance();
-    return _prefs.getString('imagePath${widget.value3}');
-  }
-
-  Future<void> _loadImage() async {
-    String? imagePath = await _loadImagePath();
-    if (imagePath != null) {
-      setState(() {
-        _savedFile = XFile(imagePath);
-      });
-    }
-  } 
 
    Future<void> _cropImage() async {
     if (_pickedFile != null) {
@@ -218,12 +219,17 @@ class TimerFunctionState extends State<TimerFunction> {
                   startTimers();
                   isPhotoTouched = 1;
                 } else if (isPhotoTouched == 1) {
-                  resetTimers();
+                  showAlertPopUp();
                   isPhotoTouched = 0;
                 }
               });
             },
             child: croppedOrSaved(imageWidth, imageHeight),
+            onDoubleTap: () {
+              setState(() {
+                showIndividualSetting(context, '케익 설정', 'content', widget.value);
+              });
+            },
             )
         : GestureDetector(
             onTap: () {
@@ -260,6 +266,39 @@ class TimerFunctionState extends State<TimerFunction> {
     );
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////Safety function/////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+  void showAlertPopUp() {
+    showDialog(
+        context: context,
+        builder: (BuildContext con) {
+          return AlertDialog(
+              title: const Text("잠깐!"),
+              content: Container(
+                child: const Text(
+                  "정말로 판매 완료 처리하시겠습니까?",
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    resetTimers();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Close"),
+                )
+              ]
+          );
+        }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -270,10 +309,11 @@ class TimerFunctionState extends State<TimerFunction> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(height: screenWidth / 80),
           _photoArea(screenWidth, screenHeight),
-          SizedBox(height: screenWidth / 50),
-          _imageButton(),
-          SizedBox(height: screenWidth / 50),
+          //SizedBox(height: screenWidth / 60),
+          //_imageButton(),
+          SizedBox(height: screenWidth / 60),
           Text(
             'remaining time : $remainingTime',
             style: const TextStyle(fontSize: 20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'cakeTimerUI.dart';
 
 void main() async {
@@ -12,49 +13,10 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "caker",
-      theme: ThemeData(
-        primaryColor: Colors.blue,
-      ),
-      home: const Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  tmpWidget(value1: 1),
-                  tmpWidget(value1: 2),
-                  tmpWidget(value1: 3),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  tmpWidget(value1 : 4),
-                  tmpWidget(value1 : 5),
-                  tmpWidget(value1 : 6),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class tmpWidget extends StatelessWidget {
+  final int value;
 
-  final int value1;
-
-  const tmpWidget({super.key, required this.value1});
-
+  const tmpWidget({super.key, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +30,56 @@ class tmpWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.lightGreen,
       ),
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      CakeTimerUI(value2: value1),
-      ],
-    ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CakeTimerUI(value: value),
+        ],
+      ),
+    );
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "caker",
+      theme: ThemeData(
+        primaryColor: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('해동을 부탁해'),
+        ),
+        body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    tmpWidget(value: 1),
+                    tmpWidget(value: 2),
+                    tmpWidget(value: 3),
+                  ],
+                ),
+                ),
+                Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    tmpWidget(value: 4),
+                    tmpWidget(value: 5),
+                    tmpWidget(value: 6),
+                  ],
+                ),
+                ),
+              ],
+            ),
+          ),
+        ),
     );
   }
 }

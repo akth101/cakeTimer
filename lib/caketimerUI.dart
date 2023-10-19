@@ -2,14 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:timer/timer.dart';
+import 'cakeName.dart';
 
 class CakeTimerUI extends StatefulWidget {
 
-  final int value2;
+  final int value;
 
   //const CakeTimerUI({super.key, required this.value2});
 
-  const CakeTimerUI({Key? key, required this.value2}) : super(key: key);
+  const CakeTimerUI({Key? key, required this.value}) : super(key: key);
 
   @override
   CakeTimerState createState() => CakeTimerState();
@@ -24,7 +25,8 @@ class CakeTimerState extends State<CakeTimerUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TimerFunction(value3: widget.value2),
+            cakeNameSetting(value: widget.value),
+            TimerFunction(value: widget.value),
           ],
         ),
       ),
