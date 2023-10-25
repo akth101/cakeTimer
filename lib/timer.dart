@@ -25,7 +25,6 @@ class TimerFunctionState extends State<TimerFunction> {
     super.initState();
     _loadImage();
   }
-
   //////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////Timer function//////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////
@@ -227,9 +226,13 @@ class TimerFunctionState extends State<TimerFunction> {
             child: croppedOrSaved(imageWidth, imageHeight),
             onDoubleTap: () {
               setState(() {
-                showIndividualSetting(context, '케익 설정', 'content', widget.value);
-              });
-            },
+                showDialog(
+                  context: context,
+                  builder: ((BuildContext context) {
+                  return IndividualSetting(value: widget.value);
+                }));
+              }); //setState
+            },  //ondoubletap
             )
         : GestureDetector(
             onTap: () {
