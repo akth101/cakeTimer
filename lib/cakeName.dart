@@ -50,8 +50,3 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
   }
 }
 
-//   Future<String> fetchData() async {
-//     await Future.delayed(Duration(seconds: 2)); // 시뮬레이션을 위해 2초 대기
-//     return '가져온 데이터';
-//   }
-// }

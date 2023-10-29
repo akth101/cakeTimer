@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'cakeTimerUI.dart';
+import 'settingUI.dart';
 
 void main() async {
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      title: 'Navigator',
+      home: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -51,6 +57,17 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('해동을 부탁해'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => settingUI()),
+                );
+                // settingUI();
+              },
+            )
+          ]
         ),
         body: Center(
             child: Column(

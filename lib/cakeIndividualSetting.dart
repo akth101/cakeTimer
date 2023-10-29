@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'cakeName.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'timer.dart';
 import 'globals.dart' as globals;
 
 import 'cakeName.dart';
@@ -28,7 +28,6 @@ class _IndividualSettingState extends State<IndividualSetting> {
     _textEditingController.dispose();
     super.dispose();
   }
-
 
   Widget dialogContent(BuildContext context, String title, String content, int value) {
     late SharedPreferences _prefs;
@@ -61,6 +60,7 @@ class _IndividualSettingState extends State<IndividualSetting> {
             child: Text('저장'),
           ),
           SizedBox(height: 20.0),                            //여백
+
           Text("debugging"),
           ElevatedButton(                                   //창 닫기 버튼
             onPressed: () {
