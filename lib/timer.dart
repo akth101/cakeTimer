@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
-// import 'globals.dart' as globals;
+import 'globals.dart' as globals;
 
 
 
@@ -33,11 +33,11 @@ class TimerFunctionState extends State<TimerFunction> {
   //////////////////////////////////////Timer function//////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////
 
-  String? startTime = ''; //해동 시작 시간
-  String elapsedTime = ''; //해동 경과 시간
-  String remainingTime = ''; //해동 완료까지 남은 시간
-  Timer? currentTimer; //타이머
-  Timer? sixHoursLaterTimer; //타이머
+  // String? startTime = ''; //해동 시작 시간
+  // String elapsedTime = ''; //해동 경과 시간
+  // String remainingTime = ''; //해동 완료까지 남은 시간
+  // Timer? currentTimer; //타이머
+  // Timer? sixHoursLaterTimer; //타이머
 
   int isPhotoTouched = 0;
   int isElapseCompleted = 0;
@@ -50,7 +50,7 @@ class TimerFunctionState extends State<TimerFunction> {
   Future<void> _loadFromShared() async {
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
     setState(() {
-      startTime = _prefs.getString('startTime-${widget.value}')! ?? null;
+      globals.startTime = _prefs.getString('startTime-${widget.value}')! ?? null;
     });
   }
 
@@ -69,6 +69,11 @@ class TimerFunctionState extends State<TimerFunction> {
     });
   }
 
+  Future<void> _saveStartTimeBackUp() async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('startTimeBackUp-${widget.value}', globals.startTime!);
+  }
+
 
 
 
@@ -80,10 +85,10 @@ class TimerFunctionState extends State<TimerFunction> {
     // 현재 시각을 얻어와 startTime 변수에 저장.
     DateTime now = DateTime.now();
     setState(() {
-      startTime = now.toString();
+      globals.startTime = now.toString();
     });
 
-    _saveStartTime(startTime);
+    _saveStartTime(globals.startTime);
 
     //startTime 안에 저장된 현재 시각을 sharedpreference에 업로드
     // final SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -91,11 +96,11 @@ class TimerFunctionState extends State<TimerFunction> {
 
 
     //startTime에 저장되어 있는 시간을 출력하기 좋은 string 형태로 parse
-    DateTime startDateTime = DateTime.parse(startTime!);
+    DateTime startDateTime = DateTime.parse(globals.startTime!);
 
     // 이전에 활성화된 타이머를 취소
-    currentTimer?.cancel();
-    sixHoursLaterTimer?.cancel();
+    globals.currentTimer?.cancel();
+    globals.sixHoursLaterTimer?.cancel();
 
     // 1초마다 '해동 경과 시간'(현재 시각 - 시작 시각)을 표시하는 타이머를 시작
     // currentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -117,7 +122,7 @@ class TimerFunctionState extends State<TimerFunction> {
     // });
 
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
-    sixHoursLaterTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    globals.sixHoursLaterTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       DateTime currentDateTime = DateTime.now();
       DateTime sixHoursLater = startDateTime.add(const Duration(seconds: 10));
       Duration timeDifference = sixHoursLater.difference(currentDateTime);
@@ -132,52 +137,53 @@ class TimerFunctionState extends State<TimerFunction> {
           '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
       setState(() {
-        if (remainingTime != '0:00:00') {
-          remainingTime = formattedTimeDifference;
+        if (globals.remainingTime != '0:00:00') {
+          globals.remainingTime = formattedTimeDifference;
         }
         else {
-          currentTimer?.cancel();
-          sixHoursLaterTimer?.cancel();
+          globals.currentTimer?.cancel();
+          globals.sixHoursLaterTimer?.cancel();
         }
       });
     });
   }
 
   void resetTimers() {
+
+    //리셋하기 전에 기존 startTime을 backup에 저장.
+    _saveStartTimeBackUp();
+
+
     // '판매 완료' 버튼을 누르면 현재 활성화된 타이머를 모두 취소하고 시간 정보를 초기화
-    currentTimer?.cancel();
-    sixHoursLaterTimer?.cancel();
+    globals.currentTimer?.cancel();
+    globals.sixHoursLaterTimer?.cancel();
     setState(() {
-      startTime = '';
-      elapsedTime = '';
-      remainingTime = '';
+      globals.startTime = '';
+      globals.elapsedTime = '';
+      globals.remainingTime = '';
     });
   }
 
   Future<void> _loadstartTime() async {
 
-    //_loadstartTime이 실행되고 있는 상태에서 터치이벤트가 들어오면 showAlertPopUp을 실행시키기 위함
-    isPhotoTouched = 1;
 
     //startTime 불러오기
     _loadFromShared();
 
-    //startTime 불러오기
-    // final SharedPreferences _prefs = await SharedPreferences.getInstance();
-    // setState(() {
-    //   startTime = _prefs.getString('startTime-${widget.value}')! ?? null;
-    // });
+    //startTime을 성공적으로 불러왔고 앱을 끈 시점에 해동이 아직 덜 되었을 경우에만 타이머를 시작
+    if (globals.startTime != '' && isElapseCompleted == 0) {
 
-    //startTime이 성공적으로 불러와졌고 isElpaseCompleted != 0이 아닐 경우에만 타이머를 시작
-    if (startTime != null && isElapseCompleted != 1) {
-      DateTime startDateTime = DateTime.parse(startTime!);
+      //_loadstartTime이 실행되고 있는 상태에서 터치이벤트가 들어오면 showAlertPopUp을 실행시키기 위함
+      isPhotoTouched = 1;
+
+      DateTime startDateTime = DateTime.parse(globals.startTime!);
 
       // 이전에 활성화된 타이머를 취소
-      currentTimer?.cancel();
-      sixHoursLaterTimer?.cancel();
+      globals.currentTimer?.cancel();
+      globals.sixHoursLaterTimer?.cancel();
 
       // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
-      sixHoursLaterTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      globals.sixHoursLaterTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         DateTime currentDateTime = DateTime.now();
         DateTime sixHoursLater = startDateTime.add(const Duration(seconds: 10));
         Duration timeDifference = sixHoursLater.difference(currentDateTime);
@@ -193,13 +199,13 @@ class TimerFunctionState extends State<TimerFunction> {
             .padLeft(2, '0')}';
 
         setState(() {
-          if (remainingTime != '0:00:00') {
-            remainingTime = formattedTimeDifference;
-          }
-          else {
-            currentTimer?.cancel();
-            sixHoursLaterTimer?.cancel();
-          }
+          // if (globals.remainingTime != '0:00:00') {
+            globals.remainingTime = formattedTimeDifference;
+          // }
+          // else {
+          //   globals.currentTimer?.cancel();
+          //   globals.sixHoursLaterTimer?.cancel();
+          // }
         });
       });
     }
@@ -430,16 +436,22 @@ class TimerFunctionState extends State<TimerFunction> {
 
   Text showRemainingTime() {
     //남은 시간이 0이라는 말은 해동이 완료되었고 그에 따라 더 이상 타이머를 돌릴 필요가 없다는 것.
-    if (remainingTime == '0:00:00') {
+    if (globals.remainingTime == '0:00:00') {
+
+      //해동이 완료되었음을 flag를 찍어 shared에 저장함으로써
+      // 앱을 껐다 다시 켜도 해동 완료가 뜨도록 조치
       _saveisElapseCompleted(1);
-      currentTimer?.cancel();
-      sixHoursLaterTimer?.cancel();
+
+      //타이머 돌릴 필요 없으므로 캔슬
+      globals.currentTimer?.cancel();
+      globals.sixHoursLaterTimer?.cancel();
+      globals.remainingTime = '';
     }
     return (isElapseCompleted == 1)
             ? Text('해동 완료!',
               style: const TextStyle(fontSize: 20),
     )
-            : Text('남은 시간 : $remainingTime',
+            : Text('남은 시간 : ${globals.remainingTime}',
                style: const TextStyle(fontSize: 20),
     );
 }
@@ -456,10 +468,12 @@ class TimerFunctionState extends State<TimerFunction> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: screenWidth / 80),
+          SizedBox(height: screenWidth / 90),
           _photoArea(screenWidth, screenHeight),
-          SizedBox(height: screenWidth / 60),
+          SizedBox(height: screenWidth / 80),
           showRemainingTime(),
+          SizedBox(height: screenWidth / 80),
+          Text('해동 시작 시간 : ${globals.startTime}'),
         ],
       ),
     );
