@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'globals.dart' as globals;
 
 class cakeNameSetting extends StatefulWidget {
 
