@@ -28,7 +28,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   int isNeedToRecovered = 0;
 
   // time variables
-  String? startTime = "hello";
+  String? startTime = null;
   String? remainingTime;
   String? currentTimeString;
   String? laterTimeString;
@@ -53,6 +53,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   int minutes = 0;
   int seconds = 0;
   int isStartTimeLoaded = 0;
+  late bool isIt;
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////load from shared-preference/////////////////////////////
@@ -79,15 +80,11 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
-  Future<void> _loadstartTime() async {
+  Future<void> _loadStartTime() async {
     _prefs = await SharedPreferences.getInstance();
-    setState(() {
+    // setState(() {
       startTime = _prefs.getString('startTime-${widget.value}');
-    });
-
-    if (startTime?.compareTo('hello') != 0) {
-      isStartTimeLoaded = 1;
-    }
+    // });
   }
 
   Future<void> _loadCakeName() async {
@@ -98,72 +95,28 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
 
-  void _loadPreviousTimerState() {
+  Future<void> _loadPreviousTimerState() async {
 
-    // _loadstartTime();
-    if (isElapseCompleted != 1)
-      {
-        isPhotoTouched = 1;
-        //startTime에 저장되어 있는 시간을 출력하기 좋은 string 형태로 parse
-        // DateTime startDateTime = DateTime.parse(startTime!);
-        DateTime startDateTime = DateTime.now();
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+    startTime = _prefs.getString('startTime-${widget.value}');
+    });
 
+    if (startTime != null) {
+      isStartTimeLoaded = 1;
+    }
+    isIt = (isStartTimeLoaded == 1);
 
-        //이전에 활성화된 타이머를 취소
-        // timeTimer?.cancel();
-
-
-        // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
-        timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          DateTime currentDateTime = DateTime.now();
-          DateTime laterDateTime = startDateTime.add(const Duration(minutes: 10));
-          Duration timeDifference = laterDateTime.difference(currentDateTime);
-
-          // 시간, 분, 초별 해동 시작 시각과 6시간 후의 시각 차이를 계산
-          hours = timeDifference.inHours;
-          minutes = (timeDifference.inMinutes % 60);
-          seconds = (timeDifference.inSeconds % 60);
-
-          // 시간 차이를 HH:mm:ss 형식으로 포맷팅
-          String formattedTimeDifference =
-              '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-
-
-          // final bool isCurrentPassedTheTargetTime;
-          // int isCurrentArrivedAtTargetTime;
-
-          //current 시간대가 later 시간대보다 뒤에 있는가?
-
-          currentTimeString = currentDateTime.toString();
-          laterTimeString = laterDateTime.toString();
-          isCurrentPassedTheTargetTime = DateTime.parse(currentTimeString!).isAfter(DateTime.parse(laterTimeString!));
-          //current 시간대와 later 시간대가 일치하는가?
-          isCurrentArrivedAtTargetTime = currentDateTime.compareTo(laterDateTime);
-
-          setState(() {
-            if (isCurrentPassedTheTargetTime == true || isCurrentArrivedAtTargetTime == 0) {
-              _saveIsElapseCompleted(1);
-              remainingTime = '';
-              timeTimer?.cancel();
-            }
-            else {
-              remainingTime = formattedTimeDifference;
-            }
-          });
-        });
-
-      }
-
-    // if (isStartTimeLoaded == 1) {
-    //   if (isElapseCompleted == 0)
-    //     {
-    //       isPhotoTouched = 1;
-    //       timer();
-    //     }
-    //   if (isElapseCompleted == 1) {
-    //     isPhotoTouched = 1;
-    //   }
-    // }
+    if (isStartTimeLoaded == 1) {
+      // if (isElapseCompleted == 0)
+        // {
+          isPhotoTouched = 1;
+          timer();
+        // }
+      // if (isElapseCompleted == 1) {
+      //   isPhotoTouched = 1;
+      // }
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -196,9 +149,10 @@ class _TimerFunctionState extends State<TimerFunction> {
   @override
   void initState() {
     super.initState();
+    // _loadStartTime();
     _loadImage();
     _loadIsElapseCompleted();
-    _loadstartTime();
+    // _loadStartTime();
     _loadPreviousTimerState();
   }
 
@@ -267,6 +221,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     DateTime now = DateTime.now();
     setState(() {
       startTime = now.toString();
+      // startTime = DateFormat('yyyy-MM-dd kk:mm').format(now);
     });
 
     //startTime에 저장된 시간을 shared에 업로드
@@ -290,7 +245,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   void recoveryTimers() {
     if (isNeedToRecovered == 1) {
-      _loadstartTime();
+      _loadStartTime();
       timer();
       isNeedToRecovered = 0;
     }
@@ -495,8 +450,8 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          // Text('isphototouched : ${isPhotoTouched}'),
-          // Text('Stime L E : ${startTime}, ${isStartTimeLoaded}, ${isElapseCompleted}'),
+          // Text('isIt StimeLoaded: ${isIt}, ${isStartTimeLoaded}'),
+          // Text('Stime Elapse : ${startTime}, ${isElapseCompleted}'),
         ],
       ),
     );
