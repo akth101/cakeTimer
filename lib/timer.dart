@@ -53,7 +53,6 @@ class _TimerFunctionState extends State<TimerFunction> {
   int minutes = 0;
   int seconds = 0;
   int isStartTimeLoaded = 0;
-  late bool isIt;
 
   ////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////load from shared-preference/////////////////////////////
@@ -105,17 +104,16 @@ class _TimerFunctionState extends State<TimerFunction> {
     if (startTime != null) {
       isStartTimeLoaded = 1;
     }
-    isIt = (isStartTimeLoaded == 1);
 
     if (isStartTimeLoaded == 1) {
-      // if (isElapseCompleted == 0)
-        // {
+      if (isElapseCompleted == 0)
+        {
           isPhotoTouched = 1;
           timer();
-        // }
-      // if (isElapseCompleted == 1) {
-      //   isPhotoTouched = 1;
-      // }
+        }
+      if (isElapseCompleted == 1) {
+        isPhotoTouched = 1;
+      }
     }
   }
 
@@ -149,10 +147,8 @@ class _TimerFunctionState extends State<TimerFunction> {
   @override
   void initState() {
     super.initState();
-    // _loadStartTime();
     _loadImage();
     _loadIsElapseCompleted();
-    // _loadStartTime();
     _loadPreviousTimerState();
   }
 
