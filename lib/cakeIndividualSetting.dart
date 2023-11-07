@@ -61,7 +61,8 @@ class _IndividualSettingState extends State<IndividualSetting> {
             child: Text('저장'),
           ),
           SizedBox(height: 20.0),                            //여백
-          ElevatedButton(onPressed: () {                     //복구 버튼
+          ElevatedButton(                                    //복구 버튼
+              onPressed: () {
             widget.saveIsNeedToRecovered(1);
           },
               child: Text('복구')

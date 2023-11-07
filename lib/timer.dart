@@ -81,9 +81,9 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> _loadStartTime() async {
     _prefs = await SharedPreferences.getInstance();
-    // setState(() {
+    setState(() {
       startTime = _prefs.getString('startTime-${widget.value}');
-    // });
+    });
   }
 
   Future<void> _loadCakeName() async {
@@ -106,8 +106,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
 
     if (isStartTimeLoaded == 1) {
-      if (isElapseCompleted == 0)
-        {
+      if (isElapseCompleted == 0) {
           isPhotoTouched = 1;
           timer();
         }
@@ -163,7 +162,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     DateTime startDateTime = DateTime.parse(startTime!);
 
     //이전에 활성화된 타이머를 취소
-    // timeTimer?.cancel();
+    timeTimer?.cancel();
 
 
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
@@ -361,7 +360,7 @@ class _TimerFunctionState extends State<TimerFunction> {
           showDialog(
               context: context,
               builder: ((BuildContext context) {
-                return IndividualSetting(value: widget.value, saveIsNeedToRecovered: saveIsNeedToRecovered,);
+                return IndividualSetting(value: widget.value, saveIsNeedToRecovered: saveIsNeedToRecovered);
               }));
           recoveryTimers();
         }); //setState
@@ -425,9 +424,36 @@ class _TimerFunctionState extends State<TimerFunction> {
     );
   }
 
-  saveIsNeedToRecovered(int value) => setState(() {
+  // Future<void> _loadStartTime() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     startTime = _prefs.getString('startTime-${widget.value}');
+  //   });
+  // }
+
+  //예비 보험용
+  // saveIsNeedToRecovered(int value) => setState(() {
+  //   isNeedToRecovered = value;
+  //   if (isNeedToRecovered == 1) {
+  //     _loadStartTime();
+  //     timer();
+  //     isNeedToRecovered = 0;
+  //   }
+  // });
+
+  Future<void> saveIsNeedToRecovered(int value) async {
     isNeedToRecovered = value;
-  });
+    if (isNeedToRecovered == 1) {
+        _prefs = await SharedPreferences.getInstance();
+        setState(() {
+          startTime = _prefs.getString('startTime-${widget.value}');
+        });
+        isPhotoTouched = 1;
+
+      timer();
+      isNeedToRecovered = 0;
+    }
+  }
 
 
 
@@ -446,8 +472,8 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          // Text('isIt StimeLoaded: ${isIt}, ${isStartTimeLoaded}'),
-          // Text('Stime Elapse : ${startTime}, ${isElapseCompleted}'),
+          Text('start photo: ${startTime}, ${isPhotoTouched}'),
+          Text('recover: ${isNeedToRecovered}'),
         ],
       ),
     );
