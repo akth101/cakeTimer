@@ -251,7 +251,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         ? const Text('해동 완료!',
       style: TextStyle(fontSize: 20),
     )
-        : Text('remainingTime : $remainingTime',
+        : Text('남은 시간 : $remainingTime',
       style: const TextStyle(fontSize: 20),
     );
   }
@@ -414,6 +414,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                 ),
                 TextButton(
                   onPressed: () {
+                    isPhotoTouched = 1;
                     Navigator.of(context).pop();
                   },
                   child: const Text("Close"),
