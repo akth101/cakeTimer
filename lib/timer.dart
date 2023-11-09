@@ -249,7 +249,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   Text showRemainingTime() {
     return (isElapseCompleted == 1)
         ? const Text('해동 완료!',
-      style: TextStyle(fontSize: 20),
+      style: TextStyle(fontSize: 20, color:Colors.deepOrange),
     )
         : Text('남은 시간 : $remainingTime',
       style: const TextStyle(fontSize: 20),
@@ -391,6 +391,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   void showAlertPopUp() {
     showDialog(
+        barrierDismissible: false, // 바깐 영역 터치시 창닫기 x
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -473,8 +474,8 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          Text('start photo: ${startTime}, ${isPhotoTouched}'),
-          Text('recover: ${isNeedToRecovered}'),
+          Text('StartTime${startTime}'),
+          Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
         ],
       ),
     );
