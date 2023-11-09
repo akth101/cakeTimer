@@ -166,7 +166,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
 
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
-    timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
       DateTime laterDateTime = startDateTime.add(const Duration(minutes: 10));
       Duration timeDifference = laterDateTime.difference(currentDateTime);
