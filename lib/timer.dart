@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
 import 'dart:io';
@@ -168,7 +169,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
-      DateTime laterDateTime = startDateTime.add(const Duration(minutes: 10));
+      DateTime laterDateTime = startDateTime.add(const Duration(hours: 6));
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
       // 시간, 분, 초별 해동 시작 시각과 6시간 후의 시각 차이를 계산
@@ -215,8 +216,8 @@ class _TimerFunctionState extends State<TimerFunction> {
     //현재 시각을 얻어와 startTime 변수에 저장
     DateTime now = DateTime.now();
     setState(() {
-      startTime = now.toString();
-      // startTime = DateFormat('yyyy-MM-dd kk:mm').format(now);
+      // startTime = now.toString();
+      startTime = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
     });
 
     //startTime에 저장된 시간을 shared에 업로드
@@ -389,6 +390,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   ///////////////////////////////////////Safety///////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
 
+
   void showAlertPopUp() {
     showDialog(
         barrierDismissible: false, // 바깐 영역 터치시 창닫기 x
@@ -400,7 +402,24 @@ class _TimerFunctionState extends State<TimerFunction> {
                   child: FutureBuilder<void>(
                       future: _loadCakeName(),
                       builder: (context, snapshot) {
-                        return Text('정말 ${cakeName}을(를) 판매 완료 처리하시겠습니까?');
+                        return RichText(
+                            text: TextSpan(
+                              text: '정말 ',
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$cakeName',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '을(를) 판매 완료 처리하시겠습니까?',
+                                ),
+                              ],
+                            ),
+                          );
                       }
                   )
               ),
@@ -474,8 +493,8 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          Text('StartTime${startTime}'),
-          Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
+          Text('Start : ${startTime}'),
+          // Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
         ],
       ),
     );

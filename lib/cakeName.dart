@@ -41,8 +41,9 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
             future: _loadCakeName(), // 비동기 함수를 호출하여 Future 반환
             builder: (context, snapshot) {
               return (cakeName != null)
-              ? Text(cakeName!)
-              : Text('error');
+              ? Text(cakeName!,
+                style: const TextStyle(fontSize: 19),)
+              : Text('None');
             },
           ),
         );
