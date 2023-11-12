@@ -11,7 +11,9 @@ import 'dart:io';
 class TimerFunction extends StatefulWidget {
 
   final int value;
-  const TimerFunction({Key? key, required this.value}) : super(key: key);
+  final int hours;
+  final int minutes;
+  const TimerFunction({Key? key, required this.value, required this.hours, required this.minutes}) : super(key: key);
 
   @override
   State<TimerFunction> createState() => _TimerFunctionState();
@@ -29,7 +31,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   int isNeedToRecovered = 0;
 
   // time variables
-  String? startTime = null;
+  String? startTime = '0';
   String? remainingTime;
   String? currentTimeString;
   String? laterTimeString;
@@ -87,6 +89,13 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
+  Future<void> _loadStartTimeBackUp() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      startTime = _prefs.getString('startTimeBackUp-${widget.value}');
+    });
+  }
+
   Future<void> _loadCakeName() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -139,6 +148,16 @@ class _TimerFunctionState extends State<TimerFunction> {
     await _prefs.setString('startTime-${widget.value}', startTime!);
   }
 
+  Future<void> _saveStartTimeBackUp(String? startTime) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('startTimeBackUp-${widget.value}', startTime!);
+  }
+
+  void deleteStartTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('startTime-${widget.value}');
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////initState//////////////////////////////////////
@@ -169,7 +188,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
-      DateTime laterDateTime = startDateTime.add(const Duration(hours: 6));
+      DateTime laterDateTime = startDateTime.add(Duration(hours: widget.hours, minutes: widget.minutes));
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
       // 시간, 분, 초별 해동 시작 시각과 6시간 후의 시각 차이를 계산
@@ -222,6 +241,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     //startTime에 저장된 시간을 shared에 업로드
     _saveStartTime(startTime);
+    _saveStartTimeBackUp(startTime);
 
     //타이머 시작
     timer();
@@ -232,6 +252,11 @@ class _TimerFunctionState extends State<TimerFunction> {
     //활성화된 타이머 모두 취소
     timeTimer?.cancel();
 
+    //shared에 저장된 startTime 삭제
+    deleteStartTime();
+
+    _saveIsElapseCompleted(0);
+
     //시간 관련 변수들 빈 문자열로 초기화
     setState(() {
       startTime = '';
@@ -241,7 +266,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   void recoveryTimers() {
     if (isNeedToRecovered == 1) {
-      _loadStartTime();
+      _loadStartTimeBackUp();
       timer();
       isNeedToRecovered = 0;
     }
@@ -363,7 +388,7 @@ class _TimerFunctionState extends State<TimerFunction> {
               builder: ((BuildContext context) {
                 return IndividualSetting(value: widget.value, saveIsNeedToRecovered: saveIsNeedToRecovered);
               }));
-          recoveryTimers();
+          // recoveryTimers();
         }); //setState
       },  //ondoubletap
       onLongPress: () {
@@ -467,7 +492,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     if (isNeedToRecovered == 1) {
         _prefs = await SharedPreferences.getInstance();
         setState(() {
-          startTime = _prefs.getString('startTime-${widget.value}');
+          startTime = _prefs.getString('startTimeBackUp-${widget.value}');
         });
         isPhotoTouched = 1;
 
@@ -494,7 +519,7 @@ class _TimerFunctionState extends State<TimerFunction> {
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
           Text('Start : ${startTime}'),
-          // Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
+          Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
         ],
       ),
     );
