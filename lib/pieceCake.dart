@@ -15,11 +15,7 @@ class pieceCake extends StatefulWidget {
 class _pieceCakeState extends State<pieceCake> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('조각케익을 부탁해'),
-      ),
-      body: Center(
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -47,7 +43,6 @@ class _pieceCakeState extends State<pieceCake> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

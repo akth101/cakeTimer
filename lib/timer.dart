@@ -6,6 +6,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
+// import 'package:just_audio/just_audio.dart';
+// import 'package:audioplayers/audioplayers.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
+
+
 import 'dart:io';
 
 class TimerFunction extends StatefulWidget {
@@ -48,6 +53,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   //Instance
   late SharedPreferences _prefs;
   final ImagePicker picker = ImagePicker();
+  late final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
 
   //temp
   late  bool isCurrentPassedTheTargetTime = true;
@@ -169,6 +175,8 @@ class _TimerFunctionState extends State<TimerFunction> {
     _loadImage();
     _loadIsElapseCompleted();
     _loadPreviousTimerState();
+    // playNotificationSound();
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +196,9 @@ class _TimerFunctionState extends State<TimerFunction> {
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
-      DateTime laterDateTime = startDateTime.add(Duration(hours: widget.hours, minutes: widget.minutes));
+      // DateTime laterDateTime = startDateTime.add(Duration(hours: widget.hours, minutes: widget.minutes));
+      DateTime laterDateTime = startDateTime.add(Duration(seconds: 5));
+
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
       // 시간, 분, 초별 해동 시작 시각과 6시간 후의 시각 차이를 계산
@@ -272,7 +282,14 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
+
+
   Text showRemainingTime() {
+
+    if (isElapseCompleted == 1) {
+      playNotificationSound();
+    }
+
     return (isElapseCompleted == 1)
         ? const Text('해동 완료!',
       style: TextStyle(fontSize: 20, color:Colors.deepOrange),
@@ -374,8 +391,13 @@ class _TimerFunctionState extends State<TimerFunction> {
           if (isPhotoTouched == 0) {
             startTimers();
             isPhotoTouched = 1;
-          } else if (isPhotoTouched == 1) {
+          }
+          else if (isPhotoTouched == 1 && 1 <= widget.value && widget.value <= 8) {
             showAlertPopUp();
+            isPhotoTouched = 0;
+          }
+          else if (isPhotoTouched == 1 && 9 <= widget.value && widget.value <= 16) {
+            showAlertPopUpForPieceCake();
             isPhotoTouched = 0;
           }
         });
@@ -470,22 +492,59 @@ class _TimerFunctionState extends State<TimerFunction> {
     );
   }
 
-  // Future<void> _loadStartTime() async {
-  //   _prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     startTime = _prefs.getString('startTime-${widget.value}');
-  //   });
-  // }
-
-  //예비 보험용
-  // saveIsNeedToRecovered(int value) => setState(() {
-  //   isNeedToRecovered = value;
-  //   if (isNeedToRecovered == 1) {
-  //     _loadStartTime();
-  //     timer();
-  //     isNeedToRecovered = 0;
-  //   }
-  // });
+  void showAlertPopUpForPieceCake() {
+    showDialog(
+        barrierDismissible: false, // 바깐 영역 터치시 창닫기 x
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text("잠깐!"),
+              content: Container(
+                  child: FutureBuilder<void>(
+                      future: _loadCakeName(),
+                      builder: (context, snapshot) {
+                        return RichText(
+                          text: TextSpan(
+                            text: '정말 ',
+                            style: DefaultTextStyle.of(context).style,
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '$cakeName',
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '을(를) 해동 완료 처리하시겠습니까?',
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                  )
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    resetTimers();
+                    _saveIsElapseCompleted(0);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Yes'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    isPhotoTouched = 1;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Close"),
+                )
+              ]
+          );
+        }
+    );
+  }
 
   Future<void> saveIsNeedToRecovered(int value) async {
     isNeedToRecovered = value;
@@ -501,7 +560,11 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
-
+  Future playNotificationSound() async {
+    final Audio audio = Audio.file('assets/notification_sound.mp3');
+    _assetsAudioPlayer.open(audio);
+    _assetsAudioPlayer.play(); //재생
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -519,6 +582,7 @@ class _TimerFunctionState extends State<TimerFunction> {
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
           Text('Start : ${startTime}'),
+          //디버깅용! 절대 지우지 말 것!!
           Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
         ],
       ),

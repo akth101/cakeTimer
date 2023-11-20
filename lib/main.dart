@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'cakeTimerUI.dart';
 import 'settingUI.dart';
 import 'pieceCake.dart';
+import 'wholeCake.dart';
 
 void main() async {
   runApp(
@@ -22,52 +23,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-
-  // Widget pieceCake() {
-  //   return Center(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         Expanded(
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //             children: [
-  //               tmpWidget(value: 9, hours: 1, minutes: 0),
-  //               tmpWidget(value: 10, hours: 1, minutes: 0),
-  //               tmpWidget(value: 11, hours: 1, minutes: 0),
-  //               tmpWidget(value: 12, hours: 1, minutes: 0),
-  //             ],
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //             children: [
-  //               tmpWidget(value: 13, hours: 1, minutes: 0),
-  //               tmpWidget(value: 14, hours: 1, minutes: 0),
-  //               tmpWidget(value: 15, hours: 1, minutes: 0),
-  //               tmpWidget(value: 16, hours: 1, minutes: 0),
-  //
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  //
-  // }
-
-
-  // void wholeOrPieceCake() {
-  //   return (pageView == 0)
-  //       ? Navigator.push(
-  //     context, MaterialPageRoute(builder: (_) => wholeCake()),
-  //   )
-  //       : Navigator.push(
-  //     context, MaterialPageRoute(builder: (_) => pieceCake()),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -80,14 +35,6 @@ class _MyAppState extends State<MyApp> {
           title: const Text('해동을 부탁해'),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.access_alarm),
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => pieceCake()),
-                );
-              },
-            ),
-            IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {
                 Navigator.push(
@@ -98,35 +45,12 @@ class _MyAppState extends State<MyApp> {
             ),
           ]
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    tmpWidget(value: 1, hours: 6, minutes: 0),
-                    tmpWidget(value: 2, hours: 6, minutes: 0),
-                    tmpWidget(value: 3, hours: 6, minutes: 0),
-                    tmpWidget(value: 4, hours: 6, minutes: 0),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    tmpWidget(value: 5, hours: 6, minutes: 0),
-                    tmpWidget(value: 6, hours: 6, minutes: 0),
-                    tmpWidget(value: 7, hours: 6, minutes: 0),
-                    tmpWidget(value: 8, hours: 6, minutes: 0),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        body: PageView(
+          children: [
+            wholeCake(),
+            pieceCake(),
+          ]
+        )
         ),
     );
   }
