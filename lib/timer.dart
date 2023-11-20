@@ -357,7 +357,6 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
   Future<void> isSelectedTimeChanged(int hour, int minute) async {
-    _prefs = await SharedPreferences.getInstance();
     setState(() {
       // selectedHour = _prefs.getInt('selectedHour-${widget.value}');
       // selectedMinute = _prefs.getInt('selectedMinute-${widget.value}');
@@ -365,9 +364,6 @@ class _TimerFunctionState extends State<TimerFunction> {
       selectedMinute = minute;
       convertedHour = selectedHour ?? 1;
       convertedMinute = selectedMinute ?? 0;
-      print("isSelectedTimeChanged");
-      print("convertedHour: $convertedHour");
-      print("convertedMinute: $convertedMinute");
     });
   }
 

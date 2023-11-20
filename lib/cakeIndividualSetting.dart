@@ -49,9 +49,6 @@ class _IndividualSettingState extends State<IndividualSetting> {
 
   Future<void> _saveSelectedTime(int hour, int minute) async {
     _prefs = await SharedPreferences.getInstance();
-    print("saveSelectedTime");
-    print(hour);
-    print(minute);
     await _prefs.setInt('selectedHour-${widget.value}', hour);
     await _prefs.setInt('selectedMinute-${widget.value}', minute);
   }

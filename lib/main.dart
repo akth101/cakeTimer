@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timer/pieceCake_2.dart';
 
 import 'cakeTimerUI.dart';
-import 'settingUI.dart';
+import 'sidebar.dart';
 import 'pieceCake_1.dart';
 import 'wholeCake.dart';
 
@@ -34,11 +34,18 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Sans',
       ),
       home: Scaffold(
-          body: PageView(children: const [
-        wholeCake(),
-        pieceCake_1(),
-        pieceCake_2(),
-      ])),
+        body: PageView(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              SideBar(),
+              Expanded(child: wholeCake()), // Sidebar
+            ],
+          ),
+        ],
+      ),        
+
+      ),
     );
   }
 }
