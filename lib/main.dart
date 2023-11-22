@@ -7,7 +7,7 @@ import 'wholeCake.dart';
 
 void main() async {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       title: 'Navigator',
       home: MyApp(),
     ),
@@ -22,7 +22,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,27 +30,22 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.blue,
       ),
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('해동을 부탁해'),
-          actions: <Widget>[
+          appBar: AppBar(title: const Text('해동을 부탁해'), actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.settings),
+              icon: const Icon(Icons.settings),
               onPressed: () {
                 Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => settingUI()),
+                  context,
+                  MaterialPageRoute(builder: (_) => const settingUI()),
                 );
                 // settingUI();
               },
             ),
-          ]
-        ),
-        body: PageView(
-          children: [
+          ]),
+          body: PageView(children: const [
             wholeCake(),
             pieceCake(),
-          ]
-        )
-        ),
+          ])),
     );
   }
 }
@@ -61,7 +55,11 @@ class tmpWidget extends StatelessWidget {
   final int hours;
   final int minutes;
 
-  const tmpWidget({super.key, required this.value, required this.hours, required this.minutes});
+  const tmpWidget(
+      {super.key,
+      required this.value,
+      required this.hours,
+      required this.minutes});
 
   @override
   Widget build(BuildContext context) {

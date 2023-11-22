@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -10,22 +11,24 @@ import 'cakeIndividualSetting.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
-
 import 'dart:io';
 
 class TimerFunction extends StatefulWidget {
-
   final int value;
   final int hours;
   final int minutes;
-  const TimerFunction({Key? key, required this.value, required this.hours, required this.minutes}) : super(key: key);
+  const TimerFunction(
+      {Key? key,
+      required this.value,
+      required this.hours,
+      required this.minutes})
+      : super(key: key);
 
   @override
   State<TimerFunction> createState() => _TimerFunctionState();
 }
 
 class _TimerFunctionState extends State<TimerFunction> {
-
   ///////////////////////////////////////////////////////////////////////
   /////////////////////////////////variables/////////////////////////////
   ///////////////////////////////////////////////////////////////////////
@@ -53,10 +56,10 @@ class _TimerFunctionState extends State<TimerFunction> {
   //Instance
   late SharedPreferences _prefs;
   final ImagePicker picker = ImagePicker();
-  late final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
+  late final _player = AudioPlayer();
 
   //temp
-  late  bool isCurrentPassedTheTargetTime = true;
+  late bool isCurrentPassedTheTargetTime = true;
   late int isCurrentArrivedAtTargetTime = 0;
   int hours = 0;
   int minutes = 0;
@@ -109,12 +112,10 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
-
   Future<void> _loadPreviousTimerState() async {
-
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-    startTime = _prefs.getString('startTime-${widget.value}');
+      startTime = _prefs.getString('startTime-${widget.value}');
     });
 
     if (startTime != null) {
@@ -123,9 +124,9 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     if (isStartTimeLoaded == 1) {
       if (isElapseCompleted == 0) {
-          isPhotoTouched = 1;
-          timer();
-        }
+        isPhotoTouched = 1;
+        timer();
+      }
       if (isElapseCompleted == 1) {
         isPhotoTouched = 1;
       }
@@ -164,7 +165,6 @@ class _TimerFunctionState extends State<TimerFunction> {
     prefs.remove('startTime-${widget.value}');
   }
 
-
   ////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////initState//////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,6 @@ class _TimerFunctionState extends State<TimerFunction> {
     _loadIsElapseCompleted();
     _loadPreviousTimerState();
     // playNotificationSound();
-
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -185,19 +184,17 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   //startTime이 null이 아니라는 전제 하에 실행되는 함수
   void timer() {
-
     //startTime에 저장되어 있는 시간을 출력하기 좋은 string 형태로 parse
     DateTime startDateTime = DateTime.parse(startTime!);
 
     //이전에 활성화된 타이머를 취소
     timeTimer?.cancel();
 
-
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
       // DateTime laterDateTime = startDateTime.add(Duration(hours: widget.hours, minutes: widget.minutes));
-      DateTime laterDateTime = startDateTime.add(Duration(seconds: 5));
+      DateTime laterDateTime = startDateTime.add(const Duration(seconds: 5));
 
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
@@ -210,7 +207,6 @@ class _TimerFunctionState extends State<TimerFunction> {
       String formattedTimeDifference =
           '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
-
       // final bool isCurrentPassedTheTargetTime;
       // int isCurrentArrivedAtTargetTime;
 
@@ -218,27 +214,25 @@ class _TimerFunctionState extends State<TimerFunction> {
 
       currentTimeString = currentDateTime.toString();
       laterTimeString = laterDateTime.toString();
-      isCurrentPassedTheTargetTime = DateTime.parse(currentTimeString!).isAfter(DateTime.parse(laterTimeString!));
+      isCurrentPassedTheTargetTime = DateTime.parse(currentTimeString!)
+          .isAfter(DateTime.parse(laterTimeString!));
       //current 시간대와 later 시간대가 일치하는가?
       isCurrentArrivedAtTargetTime = currentDateTime.compareTo(laterDateTime);
 
       setState(() {
-        if (isCurrentPassedTheTargetTime == true || isCurrentArrivedAtTargetTime == 0) {
+        if (isCurrentPassedTheTargetTime == true ||
+            isCurrentArrivedAtTargetTime == 0) {
           _saveIsElapseCompleted(1);
           remainingTime = '';
           timeTimer?.cancel();
-        }
-        else {
-            remainingTime = formattedTimeDifference;
+        } else {
+          remainingTime = formattedTimeDifference;
         }
       });
     });
-
   }
 
-
   void startTimers() {
-
     //일단 해동 완료가 표시되지 않도록 예방 조치
     _saveIsElapseCompleted(0);
 
@@ -258,7 +252,6 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
   void resetTimers() {
-
     //활성화된 타이머 모두 취소
     timeTimer?.cancel();
 
@@ -282,28 +275,25 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
-
-
   Text showRemainingTime() {
-
     if (isElapseCompleted == 1) {
       playNotificationSound();
     }
 
     return (isElapseCompleted == 1)
-        ? const Text('해동 완료!',
-      style: TextStyle(fontSize: 20, color:Colors.deepOrange),
-    )
-        : Text('남은 시간 : $remainingTime',
-      style: const TextStyle(fontSize: 20),
-    );
+        ? const Text(
+            '해동 완료!',
+            style: TextStyle(fontSize: 20, color: Colors.deepOrange),
+          )
+        : Text(
+            '남은 시간 : $remainingTime',
+            style: const TextStyle(fontSize: 20),
+          );
   }
-
 
   ////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////Images///////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
-
 
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
@@ -340,7 +330,7 @@ class _TimerFunctionState extends State<TimerFunction> {
               height: 520,
             ),
             viewPort:
-            const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
             enableExif: true,
             enableZoom: true,
             showZoomer: true,
@@ -350,7 +340,8 @@ class _TimerFunctionState extends State<TimerFunction> {
       if (croppedFile != null) {
         setState(() {
           _croppedFile = croppedFile;
-          String? imagePath = _croppedFile != null ? _croppedFile!.path : null;  //이거 삼항 연산자임
+          String? imagePath =
+              _croppedFile != null ? _croppedFile!.path : null; //이거 삼항 연산자임
           _saveImagePath(imagePath);
         });
       }
@@ -359,26 +350,25 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Widget croppedOrSaved(double imageWidth, double imageHeight) {
     if (_croppedFile != null && _savedFile != null) {
-      return Container(
+      return SizedBox(
         width: imageWidth,
         height: imageHeight,
         child: Image.file(File(_croppedFile!.path)),
       );
     }
     if (_croppedFile != null && _savedFile == null) {
-      return Container(
+      return SizedBox(
         width: imageWidth,
         height: imageHeight,
         child: Image.file(File(_croppedFile!.path)),
       );
     }
-    return Container(
+    return SizedBox(
       width: imageWidth,
       height: imageHeight,
       child: Image.file(File(_savedFile!.path)),
     );
   }
-
 
   Widget _photoArea(double screenWidth, double screenHeight) {
     double imageWidth = (screenWidth / 3 - screenWidth * 0.01) / 2;
@@ -386,57 +376,59 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     return (_croppedFile != null || _savedFile != null)
         ? GestureDetector(
-      onTap: () {
-        setState(() {
-          if (isPhotoTouched == 0) {
-            startTimers();
-            isPhotoTouched = 1;
-          }
-          else if (isPhotoTouched == 1 && 1 <= widget.value && widget.value <= 8) {
-            showAlertPopUp();
-            isPhotoTouched = 0;
-          }
-          else if (isPhotoTouched == 1 && 9 <= widget.value && widget.value <= 16) {
-            showAlertPopUpForPieceCake();
-            isPhotoTouched = 0;
-          }
-        });
-      },
-      child: croppedOrSaved(imageWidth, imageHeight),
-      onDoubleTap: () {
-        setState(() {
-          showDialog(
-              context: context,
-              builder: ((BuildContext context) {
-                return IndividualSetting(value: widget.value, saveIsNeedToRecovered: saveIsNeedToRecovered);
-              }));
-          // recoveryTimers();
-        }); //setState
-      },  //ondoubletap
-      onLongPress: () {
-        setState(() {
-          getImage(ImageSource.gallery); //getImage 함수를 호출해서 갤러리에서 사진 가져오기
-        });
-      }
-      ,
-    )
+            onTap: () {
+              setState(() {
+                if (isPhotoTouched == 0) {
+                  startTimers();
+                  isPhotoTouched = 1;
+                } else if (isPhotoTouched == 1 &&
+                    1 <= widget.value &&
+                    widget.value <= 8) {
+                  showAlertPopUp();
+                  isPhotoTouched = 0;
+                } else if (isPhotoTouched == 1 &&
+                    9 <= widget.value &&
+                    widget.value <= 16) {
+                  showAlertPopUpForPieceCake();
+                  isPhotoTouched = 0;
+                }
+              });
+            },
+            child: croppedOrSaved(imageWidth, imageHeight),
+            onDoubleTap: () {
+              setState(() {
+                showDialog(
+                    context: context,
+                    builder: ((BuildContext context) {
+                      return IndividualSetting(
+                          value: widget.value,
+                          saveIsNeedToRecovered: saveIsNeedToRecovered);
+                    }));
+                // recoveryTimers();
+              }); //setState
+            }, //ondoubletap
+            onLongPress: () {
+              setState(() {
+                getImage(ImageSource.gallery); //getImage 함수를 호출해서 갤러리에서 사진 가져오기
+              });
+            },
+          )
         : GestureDetector(
-        onTap: () {
-          setState(() {
-            getImage(ImageSource.gallery);
-          });
-        },
-        child: Container(
-          width: imageWidth,
-          height: imageHeight,
-          color: Colors.grey,
-        ));
+            onTap: () {
+              setState(() {
+                getImage(ImageSource.gallery);
+              });
+            },
+            child: Container(
+              width: imageWidth,
+              height: imageHeight,
+              color: Colors.grey,
+            ));
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////Safety///////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
-
 
   void showAlertPopUp() {
     showDialog(
@@ -450,26 +442,24 @@ class _TimerFunctionState extends State<TimerFunction> {
                       future: _loadCakeName(),
                       builder: (context, snapshot) {
                         return RichText(
-                            text: TextSpan(
-                              text: '정말 ',
-                              style: DefaultTextStyle.of(context).style,
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '$cakeName',
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          text: TextSpan(
+                            text: '정말 ',
+                            style: DefaultTextStyle.of(context).style,
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: '$cakeName',
+                                style: const TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                TextSpan(
-                                  text: '을(를) 판매 완료 처리하시겠습니까?',
-                                ),
-                              ],
-                            ),
-                          );
-                      }
-                  )
-              ),
+                              ),
+                              const TextSpan(
+                                text: '을(를) 판매 완료 처리하시겠습니까?',
+                              ),
+                            ],
+                          ),
+                        );
+                      })),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -477,7 +467,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                     _saveIsElapseCompleted(0);
                     Navigator.of(context).pop();
                   },
-                  child: Text('Yes'),
+                  child: const Text('Yes'),
                 ),
                 TextButton(
                   onPressed: () {
@@ -486,10 +476,8 @@ class _TimerFunctionState extends State<TimerFunction> {
                   },
                   child: const Text("Close"),
                 )
-              ]
-          );
-        }
-    );
+              ]);
+        });
   }
 
   void showAlertPopUpForPieceCake() {
@@ -510,20 +498,18 @@ class _TimerFunctionState extends State<TimerFunction> {
                             children: <TextSpan>[
                               TextSpan(
                                 text: '$cakeName',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(
+                              const TextSpan(
                                 text: '을(를) 해동 완료 처리하시겠습니까?',
                               ),
                             ],
                           ),
                         );
-                      }
-                  )
-              ),
+                      })),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -531,7 +517,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                     _saveIsElapseCompleted(0);
                     Navigator.of(context).pop();
                   },
-                  child: Text('Yes'),
+                  child: const Text('Yes'),
                 ),
                 TextButton(
                   onPressed: () {
@@ -540,30 +526,27 @@ class _TimerFunctionState extends State<TimerFunction> {
                   },
                   child: const Text("Close"),
                 )
-              ]
-          );
-        }
-    );
+              ]);
+        });
   }
 
   Future<void> saveIsNeedToRecovered(int value) async {
     isNeedToRecovered = value;
     if (isNeedToRecovered == 1) {
-        _prefs = await SharedPreferences.getInstance();
-        setState(() {
-          startTime = _prefs.getString('startTimeBackUp-${widget.value}');
-        });
-        isPhotoTouched = 1;
+      _prefs = await SharedPreferences.getInstance();
+      setState(() {
+        startTime = _prefs.getString('startTimeBackUp-${widget.value}');
+      });
+      isPhotoTouched = 1;
 
       timer();
       isNeedToRecovered = 0;
     }
   }
 
-  Future playNotificationSound() async {
-    final Audio audio = Audio.file('assets/notification_sound.mp3');
-    _assetsAudioPlayer.open(audio);
-    _assetsAudioPlayer.play(); //재생
+  Future<void> playNotificationSound() async {
+    await _player.play(UrlSource(
+        'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'));
   }
 
   @override
@@ -581,12 +564,12 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          Text('Start : ${startTime}'),
+          Text('Start : $startTime'),
           //디버깅용! 절대 지우지 말 것!!
-          Text('Photo / Recover / Elapse: ${isPhotoTouched}, ${isNeedToRecovered}, ${isElapseCompleted}'),
+          Text(
+              'Photo / Recover / Elapse: $isPhotoTouched, $isNeedToRecovered, $isElapseCompleted'),
         ],
       ),
     );
   }
 }
-
