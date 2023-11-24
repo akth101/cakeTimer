@@ -1,14 +1,11 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
-// import 'package:just_audio/just_audio.dart';
-// import 'package:audioplayers/audioplayers.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
 import 'dart:io';
@@ -37,6 +34,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   int isPhotoTouched = 0;
   int? isElapseCompleted = 0;
   int isNeedToRecovered = 0;
+  int? ringAlarmSound = 0;
 
   // time variables
   String? startTime = '0';
@@ -56,7 +54,8 @@ class _TimerFunctionState extends State<TimerFunction> {
   //Instance
   late SharedPreferences _prefs;
   final ImagePicker picker = ImagePicker();
-  late final _player = AudioPlayer();
+  // late final _player = AudioPlayer();
+  final assetsAudioPlayer = AssetsAudioPlayer();
 
   //temp
   late bool isCurrentPassedTheTargetTime = true;
@@ -88,6 +87,13 @@ class _TimerFunctionState extends State<TimerFunction> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       isElapseCompleted = _prefs.getInt('isElapseCompleted-${widget.value}');
+    });
+  }
+
+  Future<void> _loadRingAlarmSound() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      ringAlarmSound = _prefs.getInt('ringAlarmSound-${widget.value}');
     });
   }
 
@@ -150,6 +156,14 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
+  Future<void> _saveringAlarmSound(int num) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setInt('ringAlarmSound-${widget.value}', num);
+    setState(() {
+      ringAlarmSound = num;
+    });
+  }
+
   Future<void> _saveStartTime(String? startTime) async {
     _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('startTime-${widget.value}', startTime!);
@@ -174,9 +188,15 @@ class _TimerFunctionState extends State<TimerFunction> {
     super.initState();
     _loadImage();
     _loadIsElapseCompleted();
+    _loadRingAlarmSound();
     _loadPreviousTimerState();
-    // playNotificationSound();
   }
+
+  // @override
+  // void dispose() {
+  //   _player.dispose();
+  //   super.dispose();
+  // }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////Timers///////////////////////////////////////
@@ -220,8 +240,8 @@ class _TimerFunctionState extends State<TimerFunction> {
       isCurrentArrivedAtTargetTime = currentDateTime.compareTo(laterDateTime);
 
       setState(() {
-        if (isCurrentPassedTheTargetTime == true ||
-            isCurrentArrivedAtTargetTime == 0) {
+        if (isCurrentPassedTheTargetTime == true) {
+          // if (isCurrentArrivedAtTargetTime == 0) {
           _saveIsElapseCompleted(1);
           remainingTime = '';
           timeTimer?.cancel();
@@ -259,6 +279,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     deleteStartTime();
 
     _saveIsElapseCompleted(0);
+    _saveringAlarmSound(0);
 
     //시간 관련 변수들 빈 문자열로 초기화
     setState(() {
@@ -276,8 +297,9 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
   Text showRemainingTime() {
-    if (isElapseCompleted == 1) {
-      playNotificationSound();
+    if (isElapseCompleted == 1 && ringAlarmSound == 0) {
+      playAlarmSound();
+      _saveringAlarmSound(1);
     }
 
     return (isElapseCompleted == 1)
@@ -544,9 +566,10 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
-  Future<void> playNotificationSound() async {
-    await _player.play(UrlSource(
-        'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3'));
+  Future<void> playAlarmSound() async {
+    assetsAudioPlayer.open(
+      Audio("assets/audios/alarm_sound.wav"),
+    );
   }
 
   @override
