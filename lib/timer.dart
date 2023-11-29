@@ -34,7 +34,8 @@ class _TimerFunctionState extends State<TimerFunction> {
   int isPhotoTouched = 0;
   int? isElapseCompleted = 0;
   int isNeedToRecovered = 0;
-  int? ringAlarmSound = 0;
+  int? ringAlarmSoundOnlyOnce = 0;
+  int? soundSetting;
 
   // time variables
   String? startTime = '0';
@@ -90,17 +91,20 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
-  Future<void> _loadRingAlarmSound() async {
+  Future<void> _loadRingAlarmSoundOnlyOnce() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      ringAlarmSound = _prefs.getInt('ringAlarmSound-${widget.value}');
+      ringAlarmSoundOnlyOnce =
+          _prefs.getInt('ringAlarmSoundOnlyOnce-${widget.value}');
+      ringAlarmSoundOnlyOnce ??= 0;
     });
   }
 
-  Future<void> _loadStartTime() async {
+  Future<void> _loadSoundSetting() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      startTime = _prefs.getString('startTime-${widget.value}');
+      soundSetting = _prefs.getInt('soundSetting-${widget.value}');
+      soundSetting ??= 0;
     });
   }
 
@@ -156,11 +160,19 @@ class _TimerFunctionState extends State<TimerFunction> {
     });
   }
 
-  Future<void> _saveringAlarmSound(int num) async {
+  Future<void> _saveSoundSetting(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('ringAlarmSound-${widget.value}', num);
+    await _prefs.setInt('soundSetting-${widget.value}', num);
     setState(() {
-      ringAlarmSound = num;
+      soundSetting = num;
+    });
+  }
+
+  Future<void> _saveRingAlarmSoundOnlyOnce(int num) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setInt('ringAlarmSoundOnlyOnce-${widget.value}', num);
+    setState(() {
+      ringAlarmSoundOnlyOnce = num;
     });
   }
 
@@ -188,7 +200,8 @@ class _TimerFunctionState extends State<TimerFunction> {
     super.initState();
     _loadImage();
     _loadIsElapseCompleted();
-    _loadRingAlarmSound();
+    _loadRingAlarmSoundOnlyOnce();
+    _loadSoundSetting();
     _loadPreviousTimerState();
   }
 
@@ -253,6 +266,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
   void startTimers() {
+    _saveRingAlarmSoundOnlyOnce(0);
     //일단 해동 완료가 표시되지 않도록 예방 조치
     _saveIsElapseCompleted(0);
 
@@ -279,7 +293,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     deleteStartTime();
 
     _saveIsElapseCompleted(0);
-    _saveringAlarmSound(0);
+    _saveRingAlarmSoundOnlyOnce(0);
 
     //시간 관련 변수들 빈 문자열로 초기화
     setState(() {
@@ -297,9 +311,10 @@ class _TimerFunctionState extends State<TimerFunction> {
   }
 
   Text showRemainingTime() {
-    if (isElapseCompleted == 1 && ringAlarmSound == 0) {
+    if (isElapseCompleted == 1 &&
+        soundSetting == 1 &&
+        ringAlarmSoundOnlyOnce == 0) {
       playAlarmSound();
-      _saveringAlarmSound(1);
     }
 
     return (isElapseCompleted == 1)
@@ -423,8 +438,10 @@ class _TimerFunctionState extends State<TimerFunction> {
                     context: context,
                     builder: ((BuildContext context) {
                       return IndividualSetting(
-                          value: widget.value,
-                          saveIsNeedToRecovered: saveIsNeedToRecovered);
+                        value: widget.value,
+                        saveIsNeedToRecovered: saveIsNeedToRecovered,
+                        fetchSoundSetting: fetchSoundSetting,
+                      );
                     }));
                 // recoveryTimers();
               }); //setState
@@ -554,6 +571,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> saveIsNeedToRecovered(int value) async {
     isNeedToRecovered = value;
+    print('isNeedToRecovred: $isNeedToRecovered');
     if (isNeedToRecovered == 1) {
       _prefs = await SharedPreferences.getInstance();
       setState(() {
@@ -566,10 +584,17 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
+  Future<void> fetchSoundSetting(int value) async {
+    soundSetting = value;
+    print('soundSetting: $soundSetting');
+    _saveSoundSetting(value);
+  }
+
   Future<void> playAlarmSound() async {
     assetsAudioPlayer.open(
       Audio("assets/audios/alarm_sound.wav"),
     );
+    _saveRingAlarmSoundOnlyOnce(1);
   }
 
   @override
@@ -590,7 +615,7 @@ class _TimerFunctionState extends State<TimerFunction> {
           Text('Start : $startTime'),
           //디버깅용! 절대 지우지 말 것!!
           Text(
-              'Photo / Recover / Elapse: $isPhotoTouched, $isNeedToRecovered, $isElapseCompleted'),
+              'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
         ],
       ),
     );
