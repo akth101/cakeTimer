@@ -27,25 +27,28 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "caker",
       theme: ThemeData(
-        primaryColor: Colors.blue,
+        primaryColor: const Color.fromARGB(255, 0, 0, 0),
+        canvasColor: Colors.white,
+        fontFamily: 'Sans',
       ),
       home: Scaffold(
-          appBar: AppBar(title: const Text('해동을 부탁해'), actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const settingUI()),
-                );
-                // settingUI();
-              },
-            ),
-          ]),
+          // appBar: AppBar(title: const Text('해동을 부탁해'), actions: <Widget>[
+          //   IconButton(
+          //     icon: const Icon(Icons.settings),
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(builder: (_) => const settingUI()),
+          //       );
+          //       // settingUI();
+          //     },
+          //   ),
+          // ]),
+          // extendBodyBehindAppBar: true,
           body: PageView(children: const [
-            wholeCake(),
-            pieceCake(),
-          ])),
+        wholeCake(),
+        pieceCake(),
+      ])),
     );
   }
 }
@@ -70,8 +73,9 @@ class tmpWidget extends StatelessWidget {
       width: screenWidth / 4 - screenWidth * 0.01,
       height: screenHeight / 2 - screenWidth * 0.01,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: Colors.lightGreen,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: const Color.fromARGB(255, 244, 244, 244),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

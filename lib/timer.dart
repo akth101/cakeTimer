@@ -38,7 +38,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   int? soundSetting;
 
   // time variables
-  String? startTime = '0';
+  String? startTime;
   String? remainingTime;
   String? currentTimeString;
   String? laterTimeString;
@@ -240,9 +240,6 @@ class _TimerFunctionState extends State<TimerFunction> {
       String formattedTimeDifference =
           '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
-      // final bool isCurrentPassedTheTargetTime;
-      // int isCurrentArrivedAtTargetTime;
-
       //current 시간대가 later 시간대보다 뒤에 있는가?
 
       currentTimeString = currentDateTime.toString();
@@ -254,7 +251,6 @@ class _TimerFunctionState extends State<TimerFunction> {
 
       setState(() {
         if (isCurrentPassedTheTargetTime == true) {
-          // if (isCurrentArrivedAtTargetTime == 0) {
           _saveIsElapseCompleted(1);
           remainingTime = '';
           timeTimer?.cancel();
@@ -297,17 +293,28 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     //시간 관련 변수들 빈 문자열로 초기화
     setState(() {
-      startTime = '';
+      startTime = null;
       remainingTime = '';
     });
   }
 
-  void recoveryTimers() {
-    if (isNeedToRecovered == 1) {
-      _loadStartTimeBackUp();
-      timer();
-      isNeedToRecovered = 0;
+  // void recoveryTimers() {
+  //   if (isNeedToRecovered == 1) {
+  //     _saveRingAlarmSoundOnlyOnce(1);
+  //     _loadStartTimeBackUp();
+  //     timer();
+  //     isNeedToRecovered = 0;
+  //   }
+  // }
+
+  Text showStartTime() {
+    String? convertedStartTime;
+
+    if (startTime != null) {
+      convertedStartTime = startTime!.substring(0, 16);
+      return Text("Start: $convertedStartTime");
     }
+    return const Text("Start: ");
   }
 
   Text showRemainingTime() {
@@ -390,20 +397,28 @@ class _TimerFunctionState extends State<TimerFunction> {
       return SizedBox(
         width: imageWidth,
         height: imageHeight,
-        child: Image.file(File(_croppedFile!.path)),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.file(File(_croppedFile!.path))),
       );
     }
     if (_croppedFile != null && _savedFile == null) {
       return SizedBox(
         width: imageWidth,
         height: imageHeight,
-        child: Image.file(File(_croppedFile!.path)),
+        // child: Image.file(File(_croppedFile!.path)),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.file(File(_croppedFile!.path))),
       );
     }
     return SizedBox(
       width: imageWidth,
       height: imageHeight,
-      child: Image.file(File(_savedFile!.path)),
+      // child: Image.file(File(_savedFile!.path)),
+      child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.file(File(_savedFile!.path))),
     );
   }
 
@@ -573,6 +588,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     isNeedToRecovered = value;
     print('isNeedToRecovred: $isNeedToRecovered');
     if (isNeedToRecovered == 1) {
+      _saveRingAlarmSoundOnlyOnce(1);
       _prefs = await SharedPreferences.getInstance();
       setState(() {
         startTime = _prefs.getString('startTimeBackUp-${widget.value}');
@@ -612,10 +628,11 @@ class _TimerFunctionState extends State<TimerFunction> {
           SizedBox(height: screenWidth / 80),
           showRemainingTime(),
           SizedBox(height: screenWidth / 80),
-          Text('Start : $startTime'),
+          // Text('Start : $startTime'),
+          showStartTime(),
           //디버깅용! 절대 지우지 말 것!!
-          Text(
-              'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
+          // Text(
+          // 'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
         ],
       ),
     );
