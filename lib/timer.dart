@@ -55,7 +55,6 @@ class _TimerFunctionState extends State<TimerFunction> {
   //Instance
   late SharedPreferences _prefs;
   final ImagePicker picker = ImagePicker();
-  // late final _player = AudioPlayer();
   final assetsAudioPlayer = AssetsAudioPlayer();
 
   //temp
@@ -407,7 +406,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         width: imageWidth,
         height: imageHeight,
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(25),
             child: Image.file(File(_croppedFile!.path))),
       );
     }
@@ -417,7 +416,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         height: imageHeight,
         // child: Image.file(File(_croppedFile!.path)),
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(25),
             child: Image.file(File(_croppedFile!.path))),
       );
     }
@@ -426,7 +425,7 @@ class _TimerFunctionState extends State<TimerFunction> {
       height: imageHeight,
       // child: Image.file(File(_savedFile!.path)),
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
           child: Image.file(File(_savedFile!.path))),
     );
   }

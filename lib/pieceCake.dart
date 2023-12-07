@@ -1,12 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'main.dart';
-
 
 class pieceCake extends StatefulWidget {
   const pieceCake({super.key});
   // const settingUI({Key? key}) : super(key: key);
-
 
   @override
   State<pieceCake> createState() => _pieceCakeState();
@@ -15,7 +12,8 @@ class pieceCake extends StatefulWidget {
 class _pieceCakeState extends State<pieceCake> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const SafeArea(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -43,6 +41,7 @@ class _pieceCakeState extends State<pieceCake> {
             ),
           ],
         ),
-      );
+      ),
+    );
   }
 }
