@@ -290,6 +290,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     _saveIsElapseCompleted(0);
     _saveRingAlarmSoundOnlyOnce(0);
+    assetsAudioPlayer.stop();
 
     //시간 관련 변수들 빈 문자열로 초기화
     setState(() {
@@ -324,15 +325,23 @@ class _TimerFunctionState extends State<TimerFunction> {
       playAlarmSound();
     }
 
-    return (isElapseCompleted == 1)
-        ? const Text(
-            '해동 완료!',
-            style: TextStyle(fontSize: 20, color: Colors.deepOrange),
-          )
-        : Text(
-            '남은 시간 : $remainingTime',
-            style: const TextStyle(fontSize: 20),
-          );
+    if (isElapseCompleted == 1) {
+      return const Text(
+        '해동 완료!',
+        style: TextStyle(fontSize: 20, color: Colors.deepOrange),
+      );
+    } else if (isElapseCompleted == 0 && remainingTime != null) {
+      return Text(
+        '남은 시간: $remainingTime',
+        style: const TextStyle(fontSize: 20),
+      );
+    }
+    return const Text(
+      '남은 시간: ',
+      style: TextStyle(
+        fontSize: 20,
+      ),
+    );
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
