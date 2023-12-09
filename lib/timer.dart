@@ -406,7 +406,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         width: imageWidth,
         height: imageHeight,
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(30),
             child: Image.file(File(_croppedFile!.path))),
       );
     }
@@ -416,7 +416,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         height: imageHeight,
         // child: Image.file(File(_croppedFile!.path)),
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(30),
             child: Image.file(File(_croppedFile!.path))),
       );
     }
@@ -425,7 +425,7 @@ class _TimerFunctionState extends State<TimerFunction> {
       height: imageHeight,
       // child: Image.file(File(_savedFile!.path)),
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(30),
           child: Image.file(File(_savedFile!.path))),
     );
   }
