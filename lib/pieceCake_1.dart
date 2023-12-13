@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 
-class pieceCake extends StatefulWidget {
-  const pieceCake({super.key});
+class pieceCake_1 extends StatefulWidget {
+  const pieceCake_1({super.key});
   // const settingUI({Key? key}) : super(key: key);
 
   @override
-  State<pieceCake> createState() => _pieceCakeState();
+  State<pieceCake_1> createState() => _pieceCake_1State();
 }
 
-class _pieceCakeState extends State<pieceCake> {
+class _pieceCake_1State extends State<pieceCake_1> {
   @override
   Widget build(BuildContext context) {
     return const SafeArea(

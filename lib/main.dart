@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:timer/pieceCake_2.dart';
 
 import 'cakeTimerUI.dart';
 import 'settingUI.dart';
-import 'pieceCake.dart';
+import 'pieceCake_1.dart';
 import 'wholeCake.dart';
 
 void main() async {
@@ -47,7 +48,8 @@ class _MyAppState extends State<MyApp> {
           // extendBodyBehindAppBar: true,
           body: PageView(children: const [
         wholeCake(),
-        pieceCake(),
+        pieceCake_1(),
+        pieceCake_2(),
       ])),
     );
   }

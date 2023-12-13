@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -7,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
-
 import 'dart:io';
 
 class TimerFunction extends StatefulWidget {
@@ -225,8 +223,9 @@ class _TimerFunctionState extends State<TimerFunction> {
     // 1초마다 '해동 완료까지 남은 시간'을 표시하는 타이머를 시작
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
-      // DateTime laterDateTime = startDateTime.add(Duration(hours: widget.hours, minutes: widget.minutes));
-      DateTime laterDateTime = startDateTime.add(const Duration(seconds: 5));
+      DateTime laterDateTime = startDateTime
+          .add(Duration(hours: widget.hours, minutes: widget.minutes));
+      // DateTime laterDateTime = startDateTime.add(const Duration(seconds: 5));
 
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
@@ -448,7 +447,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                   isPhotoTouched = 0;
                 } else if (isPhotoTouched == 1 &&
                     9 <= widget.value &&
-                    widget.value <= 16) {
+                    widget.value <= 24) {
                   showAlertPopUpForPieceCake();
                   isPhotoTouched = 0;
                 }
