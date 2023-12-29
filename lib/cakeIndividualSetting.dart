@@ -187,6 +187,26 @@ class _IndividualSettingState extends State<IndividualSetting> {
     }
   }
 
+  String? _selectedTime;
+
+  Future<void> pickTime() async {
+    final TimeOfDay? result = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (context, childWidget) {
+          return MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: childWidget!);
+        });
+    if (result != null) {
+      setState(() {
+        _selectedTime = result.format(context);
+      });
+    }
+    print(_selectedTime);
+  }
+
   @override
   void initState() {
     _loadSoundSetting();
@@ -248,6 +268,13 @@ class _IndividualSettingState extends State<IndividualSetting> {
                 widget.saveIsNeedToRecovered(1);
               },
               child: const Text('복구')),
+          const SizedBox(height: 20.0), //여백
+          ElevatedButton(
+            onPressed: () {
+              pickTime();
+            },
+            child: const Text("시간 변경"),
+          ),
           const SizedBox(height: 20.0), //여백
           ElevatedButton(
             //창 닫기 버튼
