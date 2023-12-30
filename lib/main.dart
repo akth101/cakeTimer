@@ -18,6 +18,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  //annotaiton
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -33,19 +34,6 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Sans',
       ),
       home: Scaffold(
-          // appBar: AppBar(title: const Text('해동을 부탁해'), actions: <Widget>[
-          //   IconButton(
-          //     icon: const Icon(Icons.settings),
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (_) => const settingUI()),
-          //       );
-          //       // settingUI();
-          //     },
-          //   ),
-          // ]),
-          // extendBodyBehindAppBar: true,
           body: PageView(children: const [
         wholeCake(),
         pieceCake_1(),
@@ -77,7 +65,6 @@ class tmpWidget extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        // color: const Color.fromARGB(255, 244, 244, 244),
         color: Colors.grey.shade300,
       ),
       child: Column(

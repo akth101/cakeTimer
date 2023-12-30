@@ -41,6 +41,10 @@ class _TimerFunctionState extends State<TimerFunction> {
   String? currentTimeString;
   String? laterTimeString;
   Timer? timeTimer;
+  int? selectedHour = 0;
+  int? selectedMinute = 0;
+  int convertedHour = 0;
+  int convertedMinute = 0;
 
   // image variables
   XFile? _pickedFile;
@@ -140,6 +144,16 @@ class _TimerFunctionState extends State<TimerFunction> {
     }
   }
 
+  Future<void> _loadSelectedTime() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedHour = _prefs.getInt('selectedHour-${widget.value}');
+      selectedMinute = _prefs.getInt('selectedMinute-${widget.value}');
+      convertedHour = selectedHour ?? 1;
+      convertedMinute = selectedMinute ?? 0;
+    });
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////save to shared-preference/////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +214,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     _loadRingAlarmSoundOnlyOnce();
     _loadSoundSetting();
     _loadPreviousTimerState();
+    _loadSelectedTime();
   }
 
   // @override
@@ -224,8 +239,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     timeTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       DateTime currentDateTime = DateTime.now();
       DateTime laterDateTime = startDateTime
-          .add(Duration(hours: widget.hours, minutes: widget.minutes));
-      // DateTime laterDateTime = startDateTime.add(const Duration(seconds: 5));
+          .add(Duration(hours: convertedHour, minutes: convertedMinute));
 
       Duration timeDifference = laterDateTime.difference(currentDateTime);
 
@@ -340,6 +354,21 @@ class _TimerFunctionState extends State<TimerFunction> {
         fontSize: 20,
       ),
     );
+  }
+
+  Future<void> isSelectedTimeChanged(int hour, int minute) async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // selectedHour = _prefs.getInt('selectedHour-${widget.value}');
+      // selectedMinute = _prefs.getInt('selectedMinute-${widget.value}');
+      selectedHour = hour;
+      selectedMinute = minute;
+      convertedHour = selectedHour ?? 1;
+      convertedMinute = selectedMinute ?? 0;
+      print("isSelectedTimeChanged");
+      print("convertedHour: $convertedHour");
+      print("convertedMinute: $convertedMinute");
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -463,6 +492,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                         value: widget.value,
                         saveIsNeedToRecovered: saveIsNeedToRecovered,
                         fetchSoundSetting: fetchSoundSetting,
+                        isSelectedTimeChanged: isSelectedTimeChanged,
                       );
                     }));
                 // recoveryTimers();
@@ -593,7 +623,6 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> saveIsNeedToRecovered(int value) async {
     isNeedToRecovered = value;
-    print('isNeedToRecovred: $isNeedToRecovered');
     if (isNeedToRecovered == 1) {
       _saveRingAlarmSoundOnlyOnce(1);
       _prefs = await SharedPreferences.getInstance();
