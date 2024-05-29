@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:timer/pieceCake_2.dart';
 
 import 'cakeTimerUI.dart';
-import 'sidebar.dart';
 import 'pieceCake_1.dart';
 import 'wholeCake.dart';
 
@@ -52,19 +51,24 @@ class _MyAppState extends State<MyApp> {
             labelType: NavigationRailLabelType.selected,
             destinations: const [
               NavigationRailDestination(
-                icon: Icon(Icons.home),
-                selectedIcon: Icon(Icons.home_filled),
-                label: Text('Home'),
+                icon: Icon(Icons.cake_outlined),
+                selectedIcon: Icon(Icons.cake_outlined),
+                label: Text('홀 해동 중'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.search),
-                selectedIcon: Icon(Icons.search),
-                label: Text('Search'),
+                icon: Icon(Icons.cake_rounded),
+                selectedIcon: Icon(Icons.cake_rounded),
+                label: Text('홀 해동 완'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.cake),
+                selectedIcon: Icon(Icons.person),
+                label: Text('조각 해동 중'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.person),
                 selectedIcon: Icon(Icons.person),
-                label: Text('Profile'),
+                label: Text('조각 해동 완'),
               ),
             ],
           ),
@@ -72,7 +76,7 @@ class _MyAppState extends State<MyApp> {
               child: _buildSelectedScreen(_selectedIndex),
             ),
           ],
-        ),        
+        ),
       ),
     );
   }
