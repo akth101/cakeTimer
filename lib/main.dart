@@ -24,6 +24,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // 선택된 인덱스를 업데이트하여 상태를 변경
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,19 +43,51 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Sans',
       ),
       home: Scaffold(
-        body: PageView(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              SideBar(),
-              Expanded(child: wholeCake()), // Sidebar
+        body: Row(
+          children: <Widget>[
+            NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            groupAlignment: 0,
+            labelType: NavigationRailLabelType.selected,
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.home),
+                selectedIcon: Icon(Icons.home_filled),
+                label: Text('Home'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.search),
+                selectedIcon: Icon(Icons.search),
+                label: Text('Search'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.person),
+                selectedIcon: Icon(Icons.person),
+                label: Text('Profile'),
+              ),
             ],
           ),
-        ],
-      ),        
-
+            Expanded(
+              child: _buildSelectedScreen(_selectedIndex),
+            ),
+          ],
+        ),        
       ),
     );
+  }
+
+    Widget _buildSelectedScreen(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return wholeCake();
+      case 1:
+        return pieceCake_1();
+      case 2:
+        return pieceCake_2();
+      default:
+        return Container();
+    }
   }
 }
 
