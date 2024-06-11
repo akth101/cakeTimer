@@ -3,14 +3,11 @@ import 'cakeTimerUI.dart';
 
 class cakeWidget extends StatelessWidget {
   final int value;
-  final int hours;
-  final int minutes;
 
   const cakeWidget(
       {super.key,
       required this.value,
-      required this.hours,
-      required this.minutes});
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +25,7 @@ class cakeWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CakeTimerUI(value: value, hours: hours, minutes: minutes),
+          CakeTimerUI(value: value),
         ],
       ),
     );

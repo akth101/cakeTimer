@@ -22,10 +22,10 @@ class _pieceCake_1State extends State<pieceCake_1> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  cakeWidget(value: 9, hours: 1, minutes: 0),
-                  cakeWidget(value: 10, hours: 1, minutes: 0),
-                  cakeWidget(value: 11, hours: 1, minutes: 0),
-                  cakeWidget(value: 12, hours: 1, minutes: 0),
+                  cakeWidget(value: 9),
+                  cakeWidget(value: 10),
+                  cakeWidget(value: 11),
+                  cakeWidget(value: 12),
                 ],
               ),
             ),
@@ -33,10 +33,10 @@ class _pieceCake_1State extends State<pieceCake_1> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  cakeWidget(value: 13, hours: 1, minutes: 0),
-                  cakeWidget(value: 14, hours: 1, minutes: 0),
-                  cakeWidget(value: 15, hours: 1, minutes: 0),
-                  cakeWidget(value: 16, hours: 1, minutes: 0),
+                  cakeWidget(value: 13),
+                  cakeWidget(value: 14),
+                  cakeWidget(value: 15),
+                  cakeWidget(value: 16),
                 ],
               ),
             ),

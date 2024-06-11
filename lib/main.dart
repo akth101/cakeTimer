@@ -34,12 +34,12 @@ class CakeDataBase extends ChangeNotifier {
     _cakes = [];
 
     for (String key in keys) {
-      if (key.startsWith('cake name-')) {
+      if (key.startsWith('cakename-')) {
         final String? cakeValue = prefs.getString(key);
+        print(1);
+        print(cakeValue);
         if (cakeValue != null) {
-          // cakeValue는 케이크 이름, 가격은 예시로 10.0으로 설정
-          final double price = 10.0; // 가격은 예시로 고정된 값 사용
-          // _cakes.add(cakeWidget(name: cakeValue, price: price));
+          _cakes.add(cakeWidget(value: int.parse(cakeValue)));
         }
       }
     }
@@ -64,6 +64,12 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _selectedIndex = index; // 선택된 인덱스를 업데이트하여 상태를 변경
     });
+  }
+
+  @override
+  void initState() {
+    CakeDataBase();
+    super.initState();
   }
 
   @override

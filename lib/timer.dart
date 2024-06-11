@@ -10,13 +10,10 @@ import 'dart:io';
 
 class TimerFunction extends StatefulWidget {
   final int value;
-  final int hours;
-  final int minutes;
   const TimerFunction(
       {Key? key,
       required this.value,
-      required this.hours,
-      required this.minutes})
+      })
       : super(key: key);
 
   @override

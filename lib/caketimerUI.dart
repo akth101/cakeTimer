@@ -6,15 +6,11 @@ import 'cakeName.dart';
 
 class CakeTimerUI extends StatefulWidget {
   final int value;
-  final int hours;
-  final int minutes;
 
-  const CakeTimerUI(
-      {Key? key,
-      required this.value,
-      required this.hours,
-      required this.minutes})
-      : super(key: key);
+  const CakeTimerUI({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
 
   @override
   CakeTimerState createState() => CakeTimerState();
@@ -30,9 +26,8 @@ class CakeTimerState extends State<CakeTimerUI> {
           children: [
             cakeNameSetting(value: widget.value),
             TimerFunction(
-                value: widget.value,
-                hours: widget.hours,
-                minutes: widget.minutes),
+              value: widget.value,
+            ),
           ],
         ),
       ),
