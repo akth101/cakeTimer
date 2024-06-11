@@ -17,8 +17,6 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
   // SharedPreferences _prefs = await SharedPreferences.getInstance();
   // final SharedPreferences _prefs = await SharedPreferences.getInstance();
   // late SharedPreferences _prefs = await SharedPreferences.getInstance();
-
-
   String? cakeName;
 
   @override
@@ -44,7 +42,7 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
               return (cakeName != null)
               ? Text(cakeName!,
                 style: const TextStyle(fontSize: 19),)
-              : Text('None');
+              : const Text('None');
             },
           ),
         );

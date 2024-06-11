@@ -46,6 +46,7 @@ dependencies:
   just_audio: ^0.9.36
   audioplayers: ^5.2.1
   assets_audio_player: ^3.1.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

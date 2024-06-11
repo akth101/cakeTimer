@@ -1,17 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:timer/cakeWidget.dart';
 import 'package:timer/pieceCake_2.dart';
-
-import 'cakeTimerUI.dart';
 import 'pieceCake_1.dart';
 import 'wholeCake.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   runApp(
-    const MaterialApp(
-      title: 'Navigator',
-      home: MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => CakeDataBase(),
+      child: const MaterialApp(
+        title: 'Navigator',
+        home: MyApp(),
+      ),
     ),
   );
+}
+
+class CakeDataBase extends ChangeNotifier {
+  List <cakeWidget> _cakes = [];
+
+  //_cakes 프라이빗 변수에 대한 읽기 전용 접근을 제공
+  List<cakeWidget> get cakes => _cakes;
+
+   CakeDataBase() {
+    _loadFromPreferences();
+  }
+
+  Future<void> _loadFromPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+    _cakes = [];
+
+    for (String key in keys) {
+      if (key.startsWith('cake name-')) {
+        final String? cakeValue = prefs.getString(key);
+        if (cakeValue != null) {
+          // cakeValue는 케이크 이름, 가격은 예시로 10.0으로 설정
+          final double price = 10.0; // 가격은 예시로 고정된 값 사용
+          // _cakes.add(cakeWidget(name: cakeValue, price: price));
+        }
+      }
+    }
+    notifyListeners();
+  }
+  //sharedpreference에서 모든 key를 가져와서 cakename count
+  //cakename 수만큼 for문 돌려가면서 cakeWidget 실행 & list에 요소 추가
 }
 
 class MyApp extends StatefulWidget {
@@ -23,7 +58,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -45,33 +79,33 @@ class _MyAppState extends State<MyApp> {
         body: Row(
           children: <Widget>[
             NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            groupAlignment: 0,
-            labelType: NavigationRailLabelType.selected,
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.cake_outlined),
-                selectedIcon: Icon(Icons.cake_outlined),
-                label: Text('홀 해동 중'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.cake_rounded),
-                selectedIcon: Icon(Icons.cake_rounded),
-                label: Text('홀 해동 완'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.cake),
-                selectedIcon: Icon(Icons.person),
-                label: Text('조각 해동 중'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.person),
-                selectedIcon: Icon(Icons.person),
-                label: Text('조각 해동 완'),
-              ),
-            ],
-          ),
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: _onItemTapped,
+              groupAlignment: 0,
+              labelType: NavigationRailLabelType.selected,
+              destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.cake_outlined),
+                  selectedIcon: Icon(Icons.cake_outlined),
+                  label: Text('홀 해동 중'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.cake_rounded),
+                  selectedIcon: Icon(Icons.cake_rounded),
+                  label: Text('홀 해동 완'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.cake),
+                  selectedIcon: Icon(Icons.person),
+                  label: Text('조각 해동 중'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.person),
+                  selectedIcon: Icon(Icons.person),
+                  label: Text('조각 해동 완'),
+                ),
+              ],
+            ),
             Expanded(
               child: _buildSelectedScreen(_selectedIndex),
             ),
@@ -81,7 +115,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-    Widget _buildSelectedScreen(int selectedIndex) {
+  Widget _buildSelectedScreen(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
         return wholeCake();
@@ -92,39 +126,5 @@ class _MyAppState extends State<MyApp> {
       default:
         return Container();
     }
-  }
-}
-
-class tmpWidget extends StatelessWidget {
-  final int value;
-  final int hours;
-  final int minutes;
-
-  const tmpWidget(
-      {super.key,
-      required this.value,
-      required this.hours,
-      required this.minutes});
-
-  @override
-  Widget build(BuildContext context) {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    double screenWidth = mediaQueryData.size.width;
-    double screenHeight = mediaQueryData.size.height;
-    return Container(
-      width: screenWidth / 4 - screenWidth * 0.02,
-      height: screenHeight / 2 - screenWidth * 0.03,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.shade300,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CakeTimerUI(value: value, hours: hours, minutes: minutes),
-        ],
-      ),
-    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'cakeWidget.dart';
+
 
 class pieceCake_2 extends StatefulWidget {
   const pieceCake_2({super.key});
@@ -21,10 +22,10 @@ class _pieceCake_2State extends State<pieceCake_2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  tmpWidget(value: 17, hours: 1, minutes: 0),
-                  tmpWidget(value: 18, hours: 1, minutes: 0),
-                  tmpWidget(value: 19, hours: 1, minutes: 0),
-                  tmpWidget(value: 20, hours: 1, minutes: 0),
+                  cakeWidget(value: 17, hours: 1, minutes: 0),
+                  cakeWidget(value: 18, hours: 1, minutes: 0),
+                  cakeWidget(value: 19, hours: 1, minutes: 0),
+                  cakeWidget(value: 20, hours: 1, minutes: 0),
                 ],
               ),
             ),
@@ -32,10 +33,10 @@ class _pieceCake_2State extends State<pieceCake_2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  tmpWidget(value: 21, hours: 1, minutes: 0),
-                  tmpWidget(value: 22, hours: 1, minutes: 0),
-                  tmpWidget(value: 23, hours: 1, minutes: 0),
-                  tmpWidget(value: 24, hours: 1, minutes: 0),
+                  cakeWidget(value: 21, hours: 1, minutes: 0),
+                  cakeWidget(value: 22, hours: 1, minutes: 0),
+                  cakeWidget(value: 23, hours: 1, minutes: 0),
+                  cakeWidget(value: 24, hours: 1, minutes: 0),
                 ],
               ),
             ),
