@@ -21,7 +21,7 @@ void main() async {
 class CakeDataBase extends ChangeNotifier {
   List <cakeWidget> _cakes = [];
 
-  //_cakes 프라이빗 변수에 대한 읽기 전용 접근을 제공
+  //_cakes 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
   List<cakeWidget> get cakes => _cakes;
 
    CakeDataBase() {
@@ -44,6 +44,9 @@ class CakeDataBase extends ChangeNotifier {
          }
         }
       }
+    if (_cakes.isNotEmpty) {
+      print("good");
+    }
     }
     @override
     notifyListeners();
