@@ -31,23 +31,23 @@ class CakeDataBase extends ChangeNotifier {
   Future<void> _loadFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys();
+    String cakeKeyValue;
+    int? intKeyValue;
     _cakes = [];
 
     for (String key in keys) {
       if (key.startsWith('cakename-')) {
-        final String? cakeValue = prefs.getString(key);
-        print(1);
-        print(cakeValue);
-        if (cakeValue != null) {
-          _cakes.add(cakeWidget(value: int.parse(cakeValue)));
+        cakeKeyValue = key.split('-').last;
+        intKeyValue = int.tryParse(cakeKeyValue);
+        if (intKeyValue != null) {
+           _cakes.add(cakeWidget(value: intKeyValue));
+         }
         }
       }
     }
+    @override
     notifyListeners();
   }
-  //sharedpreference에서 모든 key를 가져와서 cakename count
-  //cakename 수만큼 for문 돌려가면서 cakeWidget 실행 & list에 요소 추가
-}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
