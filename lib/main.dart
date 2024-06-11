@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:timer/cakeWidget.dart';
-import 'package:timer/pieceCake_2.dart';
-import 'pieceCake_1.dart';
-import 'wholeCake.dart';
+import 'package:timer/pieceCakeElapsed.dart';
+import 'pieceCakeElapsing.dart';
+import 'wholeCakeElapsing.dart';
+import 'wholeCakeElapsed.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,12 +20,12 @@ void main() async {
 }
 
 class CakeDataBase extends ChangeNotifier {
-  List <cakeWidget> _cakes = [];
+  List<cakeWidget> _cakes = [];
 
   //_cakes 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
   List<cakeWidget> get cakes => _cakes;
 
-   CakeDataBase() {
+  CakeDataBase() {
     _loadFromPreferences();
   }
 
@@ -40,17 +41,15 @@ class CakeDataBase extends ChangeNotifier {
         cakeKeyValue = key.split('-').last;
         intKeyValue = int.tryParse(cakeKeyValue);
         if (intKeyValue != null) {
-           _cakes.add(cakeWidget(value: intKeyValue));
-         }
+          _cakes.add(cakeWidget(value: intKeyValue));
         }
       }
-    if (_cakes.isNotEmpty) {
-      print("good");
     }
-    }
-    @override
-    notifyListeners();
   }
+
+  @override
+  notifyListeners();
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -127,13 +126,13 @@ class _MyAppState extends State<MyApp> {
   Widget _buildSelectedScreen(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return wholeCake();
+        return const wholeCakeElapsing();
       case 1:
-        return pieceCake_1();
+        return const wholeCakeElapsed();
       case 2:
-        return pieceCake_2();
+        return const pieceCakeElapsing();
       default:
-        return Container();
+        return const pieceCakeElapsed();
     }
   }
 }

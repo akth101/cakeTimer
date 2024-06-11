@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
 import 'cakeWidget.dart';
 
-class pieceCake_1 extends StatefulWidget {
-  const pieceCake_1({super.key});
-  // const settingUI({Key? key}) : super(key: key);
+class wholeCakeElapsed extends StatefulWidget {
+  const wholeCakeElapsed({super.key});
 
   @override
-  State<pieceCake_1> createState() => _pieceCake_1State();
+  State<wholeCakeElapsed> createState() => _wholeCakeElapsingState();
 }
 
-class _pieceCake_1State extends State<pieceCake_1> {
+class _wholeCakeElapsingState extends State<wholeCakeElapsed> {
   @override
   Widget build(BuildContext context) {
     return const SafeArea(
@@ -22,10 +20,10 @@ class _pieceCake_1State extends State<pieceCake_1> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  cakeWidget(value: 9),
-                  cakeWidget(value: 10),
-                  cakeWidget(value: 11),
-                  cakeWidget(value: 12),
+                  cakeWidget(value: 1),
+                  cakeWidget(value: 2),
+                  cakeWidget(value: 3),
+                  cakeWidget(value: 4),
                 ],
               ),
             ),
@@ -33,10 +31,10 @@ class _pieceCake_1State extends State<pieceCake_1> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  cakeWidget(value: 13),
-                  cakeWidget(value: 14),
-                  cakeWidget(value: 15),
-                  cakeWidget(value: 16),
+                  cakeWidget(value: 5),
+                  cakeWidget(value: 6),
+                  cakeWidget(value: 7),
+                  cakeWidget(value: 8),
                 ],
               ),
             ),
