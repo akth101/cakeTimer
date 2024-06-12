@@ -47,9 +47,16 @@ class CakeDataBase extends ChangeNotifier {
     }
   }
 
-  @override
-  notifyListeners();
+    void reorderCakes(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final item = _cakes.removeAt(oldIndex);
+    _cakes.insert(newIndex, item);
+    notifyListeners();
+  }
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

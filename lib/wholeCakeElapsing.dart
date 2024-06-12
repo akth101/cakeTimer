@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
+import 'main.dart';
 import 'cakeWidget.dart';
 
 class wholeCakeElapsing extends StatefulWidget {
@@ -9,38 +12,36 @@ class wholeCakeElapsing extends StatefulWidget {
 }
 
 class _wholeCakeElapsingState extends State<wholeCakeElapsing> {
+
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  cakeWidget(value: 1),
-                  cakeWidget(value: 2),
-                  cakeWidget(value: 3),
-                  cakeWidget(value: 4),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  cakeWidget(value: 5),
-                  cakeWidget(value: 6),
-                  cakeWidget(value: 7),
-                  cakeWidget(value: 8),
-                ],
-              ),
-            ),
-          ],
-        ),
+  return Consumer<CakeDataBase>(
+  builder: (context, cakeDatabase, child) {
+    return ReorderableGridView.builder(
+      itemCount: cakeDatabase.cakes.length,
+      onReorder: (oldIndex, newIndex) {
+        cakeDatabase.reorderCakes(oldIndex, newIndex);
+      },
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1.0,
       ),
-    );
-  }
+      itemBuilder: (context, index) {
+        final cake = cakeDatabase.cakes[index];
+        return Card(
+          key: ValueKey(cake.value),
+          color: Colors.blueAccent,
+          child: Center(
+            child: Text(
+              'Cake ${cake.value}',
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+              textAlign: TextAlign.center,
+             ),
+           ),
+         );
+       },
+     );
+   },
+  );
+}
 }
