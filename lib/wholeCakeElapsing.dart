@@ -22,23 +22,18 @@ class _wholeCakeElapsingState extends State<wholeCakeElapsing> {
       onReorder: (oldIndex, newIndex) {
         cakeDatabase.reorderCakes(oldIndex, newIndex);
       },
+      //gridDelegate: 각 셀의 크기를 결정
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
+        crossAxisCount: 4,
+        childAspectRatio: 0.7,
       ),
+      //itemCount 속성에 의해 itemBuilder가 몇 번 호출될지 결정된다.
       itemBuilder: (context, index) {
         final cake = cakeDatabase.cakes[index];
         return Card(
           key: ValueKey(cake.value),
-          color: Colors.blueAccent,
-          child: Center(
-            child: Text(
-              'Cake ${cake.value}',
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-              textAlign: TextAlign.center,
-             ),
-           ),
-         );
+          child: cake,
+        );
        },
      );
    },
