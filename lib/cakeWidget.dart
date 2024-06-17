@@ -20,7 +20,7 @@ class cakeWidget extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.shade300,
+        color: const Color.fromRGBO(224, 224, 224, 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

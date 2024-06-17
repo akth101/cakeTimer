@@ -20,13 +20,26 @@ void main() async {
 }
 
 class CakeDataBase extends ChangeNotifier {
-  List<cakeWidget> _cakes = [];
 
-  //_cakes 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
-  List<cakeWidget> get cakes => _cakes;
+  int? isElapseCompleted;
+  Map<String, cakeWidget> _cakes = {};
+  List<cakeWidget> _elapsedCakes = [];
+  List<cakeWidget> _elapsingCakes = [];
+
+  //Elapsing & Elapsed 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
+  List<cakeWidget> get elapsedCakes => _elapsedCakes;
+  List<cakeWidget> get elapsingCakes => _elapsingCakes;
 
   CakeDataBase() {
     _loadFromPreferences();
+    _makeElapsedAndElapsingCakeList();
+  }
+
+
+  Future<void> _loadIsElapseCompleted(int value) async {
+    final prefs = await SharedPreferences.getInstance();
+      isElapseCompleted = prefs.getInt('isElapseCompleted-$value');
+      notifyListeners();
   }
 
   Future<void> _loadFromPreferences() async {
@@ -34,27 +47,55 @@ class CakeDataBase extends ChangeNotifier {
     final keys = prefs.getKeys();
     String cakeKeyValue;
     int? intKeyValue;
-    _cakes = [];
 
+    //shared에서 케익 정보를 불러와 map을 만드는 for문.
+    //map에는 아래와 같이 데이터가 저장된다
+    //key: cakeKey.isElapseCompleted, value: ckaeWidget
     for (String key in keys) {
       if (key.startsWith('cakename-')) {
         cakeKeyValue = key.split('-').last;
         intKeyValue = int.tryParse(cakeKeyValue);
         if (intKeyValue != null) {
-          _cakes.add(cakeWidget(value: intKeyValue));
+          //_loadisElapseCompleted는 비동기이기 때문에 작업이 완료되길 기다린 후에 아래 코드로 넘어간다.
+          //안 그러면 isElapseCompleted에는 null값이 들어가게 된다. 
+          await _loadIsElapseCompleted(intKeyValue);
+          String mapKey = "$intKeyValue.$isElapseCompleted";
+          print(mapKey);
+          _cakes[mapKey] = cakeWidget(value: intKeyValue);
+          print('Map after adding $mapKey: $_cakes');
+
         }
       }
     }
   }
 
-    void reorderCakes(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) {
-      newIndex -= 1;
-    }
-    final item = _cakes.removeAt(oldIndex);
-    _cakes.insert(newIndex, item);
-    notifyListeners();
+
+
+  void _makeElapsedAndElapsingCakeList() {
+
+    if (_cakes.isEmpty) {
+      print("The map is empty");
+    return;
   }
+
+    _cakes.forEach((key, value) {
+      String? _isElapseCompleted = key.split(".").last;
+      print("test");
+      print(_isElapseCompleted);
+    });
+    print("test");
+
+
+  }
+
+  //   void reorderCakes(int oldIndex, int newIndex) {
+  //   if (newIndex > oldIndex) {
+  //     newIndex -= 1;
+  //   }
+  //   final item = _cakes.removeAt(oldIndex);
+  //   _cakes.insert(newIndex, item);
+  //   notifyListeners();
+  // }
 }
 
 
@@ -122,7 +163,8 @@ class _MyAppState extends State<MyApp> {
               ],
             ),
             Expanded(
-              child: _buildSelectedScreen(_selectedIndex),
+              // child: _buildSelectedScreen(_selectedIndex),
+              child: Container(),
             ),
           ],
         ),
@@ -130,16 +172,16 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildSelectedScreen(int selectedIndex) {
-    switch (selectedIndex) {
-      case 0:
-        return const wholeCakeElapsing();
-      case 1:
-        return const wholeCakeElapsed();
-      case 2:
-        return const pieceCakeElapsing();
-      default:
-        return const pieceCakeElapsed();
-    }
-  }
+  // Widget _buildSelectedScreen(int selectedIndex) {
+  //   switch (selectedIndex) {
+  //     case 0:
+  //       return const wholeCakeElapsing();
+  //     case 1:
+  //       return const wholeCakeElapsed();
+  //     case 2:
+  //       return const pieceCakeElapsing();
+  //     default:
+  //       return const pieceCakeElapsed();
+  //   }
+  // }
 }
