@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timer/main.dart';
 import 'cakeIndividualSetting.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'dart:io';
@@ -166,6 +168,10 @@ class _TimerFunctionState extends State<TimerFunction> {
     setState(() {
       isElapseCompleted = num;
     });
+
+    final cakeDataBase = CakeDataBase.instance;
+
+    cakeDataBase.reBuildCakeList();
   }
 
   Future<void> _saveSoundSetting(int num) async {
@@ -548,7 +554,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                 TextButton(
                   onPressed: () {
                     resetTimers();
-                    _saveIsElapseCompleted(0);
+                    // _saveIsElapseCompleted(0);
                     Navigator.of(context).pop();
                   },
                   child: const Text('Yes'),
@@ -642,28 +648,54 @@ class _TimerFunctionState extends State<TimerFunction> {
     _saveRingAlarmSoundOnlyOnce(1);
   }
 
-  @override
+  // @override
+  // Widget build(BuildContext context) {
+  //   MediaQueryData mediaQueryData = MediaQuery.of(context);
+  //   double screenWidth = mediaQueryData.size.width;
+  //   double screenHeight = mediaQueryData.size.height;
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         SizedBox(height: screenWidth / 90),
+  //         _photoArea(screenWidth, screenHeight),
+  //         SizedBox(height: screenWidth / 80),
+  //         showRemainingTime(),
+  //         SizedBox(height: screenWidth / 80),
+  //         // Text('Start : $startTime'),
+  //         showStartTime(),
+  //         //디버깅용! 절대 지우지 말 것!!
+  //         // Text(
+  //         // 'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
+  //       ],
+  //     ),
+  //   );
+
+    @override
   Widget build(BuildContext context) {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    double screenWidth = mediaQueryData.size.width;
-    double screenHeight = mediaQueryData.size.height;
-    return Center(
-      // child: SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: screenWidth / 90),
-          _photoArea(screenWidth, screenHeight),
-          SizedBox(height: screenWidth / 80),
-          showRemainingTime(),
-          SizedBox(height: screenWidth / 80),
-          // Text('Start : $startTime'),
-          showStartTime(),
-          //디버깅용! 절대 지우지 말 것!!
-          // Text(
-          // 'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
-        ],
-      ),
+    return Consumer<CakeDataBase>(
+      builder: (context, cakeDataBase, child) {
+        MediaQueryData mediaQueryData = MediaQuery.of(context);
+        double screenWidth = mediaQueryData.size.width;
+        double screenHeight = mediaQueryData.size.height;
+
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: screenWidth / 90),
+              _photoArea(screenWidth, screenHeight),
+              SizedBox(height: screenWidth / 80),
+              showRemainingTime(),
+              SizedBox(height: screenWidth / 80),
+              showStartTime(),
+              // 디버깅용! 절대 지우지 말 것!!
+              // Text('Sset / Sonce / Elapse: ${cakeDataBase.soundSetting}, ${cakeDataBase.ringAlarmSoundOnlyOnce}, ${cakeDataBase.isElapseCompleted}'),
+            ],
+          ),
+        );
+      },
     );
   }
-}
+  }
+
