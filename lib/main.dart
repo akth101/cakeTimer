@@ -6,6 +6,7 @@ import 'wholeCakeElapsing.dart';
 import 'wholeCakeElapsed.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'settings.dart';
 
 void main() async {
   runApp(
@@ -91,7 +92,6 @@ class CakeDataBase extends ChangeNotifier {
     _elapsingCakes.clear();
     _elapsedCakes.clear();
     _cakes.forEach((key, value) {
-      // print("key: $key");
       String? _isElapseCompleted = key.split(".").last;
       String? _cakeValue = key.split(".").first;
       int? _intCakeValue = int.tryParse(_cakeValue);
@@ -107,10 +107,10 @@ class CakeDataBase extends ChangeNotifier {
       }
     });
 
-    print("elapsing: ");
-    print(_elapsingCakes);
-    print("elapsed: ");
-    print(_elapsedCakes);
+    // print("elapsing: ");
+    // print(_elapsingCakes);
+    // print("elapsed: ");
+    // print(_elapsedCakes);
     notifyListeners();
   }
 
@@ -174,6 +174,22 @@ class _MyAppState extends State<MyApp> {
               onDestinationSelected: _onItemTapped,
               groupAlignment: 0,
               labelType: NavigationRailLabelType.selected,
+              
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => 
+                    const settings(),
+                    ),
+                  );
+
+                },
+                child: const Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Icon(Icons.settings),
+                  ),
+              ),
               destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.cake_outlined),

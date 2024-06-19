@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:settings_ui/settings_ui.dart';
+import 'package:timer/wholeCakeList.dart';
+
+class settings extends StatefulWidget {
+  const settings({super.key});
+  // const settingUI({Key? key}) : super(key: key);
+
+  @override
+  State<settings> createState() => _settingsState();
+}
+
+class _settingsState extends State<settings> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('설정'),
+      ),
+      body: SettingsList(
+        sections: [
+          SettingsSection(
+            title: Text('Common'),
+            tiles: <SettingsTile>[
+              SettingsTile.navigation(
+                leading: Icon(Icons.list),
+                title: Text('홀케익 목록 설정'),
+                value: Text('기기에 저장된 홀케익 목록을 편집할 수 있습니다.'),
+                onPressed: (BuildContext context) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => wholeCakeList()),
+                  );
+                },
+              ),
+              SettingsTile(
+                leading: Icon(Icons.list),
+                title: Text("조각케익 목록 설정"), 
+                value: Text('기기에 저장된 조각케익 목록을 편집할 수 있습니다.'),
+                ),
+              SettingsTile(
+                leading: Icon(Icons.warning_amber),
+                title: Text("비상 리스트 생성"),
+                value: Text("메인 화면이 올바르게 동작하지 않을 경우, 해동 시작 시간 임시 리스트를 생성합니다."),
+                ),
+              SettingsTile.navigation(
+                leading: Icon(Icons.rocket_launch_sharp),
+                title: Text('개발자 응원하기'),
+                value: Text('카카오뱅크 3333-03-0417246 고성준'),
+              ),
+
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
