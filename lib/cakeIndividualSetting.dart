@@ -37,7 +37,7 @@ class _IndividualSettingState extends State<IndividualSetting> {
 
   Future<void> _saveSoundSetting(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('soundSetting-${widget.cakeKey}', num);
+    await _prefs.setInt('soundSetting_${widget.cakeKey}', num);
     setState(() {
       soundSetting = num;
     });
@@ -45,8 +45,8 @@ class _IndividualSettingState extends State<IndividualSetting> {
 
   Future<void> _saveSelectedTime(int hour, int minute) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('selectedHour-${widget.cakeKey}', hour);
-    await _prefs.setInt('selectedMinute-${widget.cakeKey}', minute);
+    await _prefs.setInt('selectedHour_${widget.cakeKey}', hour);
+    await _prefs.setInt('selectedMinute_${widget.cakeKey}', minute);
   }
 
 
@@ -58,7 +58,7 @@ class _IndividualSettingState extends State<IndividualSetting> {
   Future<void> _loadSoundSetting() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      soundSetting = _prefs.getInt('soundSetting-${widget.cakeKey}');
+      soundSetting = _prefs.getInt('soundSetting_${widget.cakeKey}');
       //만약에 데이터 못받아오면 0으로 설정
       soundSetting ??= 0;
     });
@@ -68,8 +68,8 @@ class _IndividualSettingState extends State<IndividualSetting> {
   Future<void> _loadSelectedTime() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedHour = _prefs.getInt('selectedHour-${widget.cakeKey}')!;
-      _selectedMinute = _prefs.getInt('selectedMinute-${widget.cakeKey}')!;
+      _selectedHour = _prefs.getInt('selectedHour_${widget.cakeKey}')!;
+      _selectedMinute = _prefs.getInt('selectedMinute_${widget.cakeKey}')!;
       _convertedHour = _selectedHour ?? 1;
       _convertedMinute = _selectedMinute ?? 0;
     });
@@ -154,12 +154,8 @@ class _IndividualSettingState extends State<IndividualSetting> {
             onPressed: () async {
               prefs = await SharedPreferences.getInstance();
               String id = const Uuid().v4();
-              await prefs.setString(
-                  'cakename-$id', _textEditingController.text);
-            //케익 이름을 저장할 때 elapsing 리스트에 보이는 것을 기본값으로 저장
-              await prefs.setInt(
-                  'displayonlist-$id', 1
-              );
+              await prefs.setString('cakename_$id', _textEditingController.text);
+              await prefs.setInt('displayonlist_$id', 1);
             },
             child: const Text('저장'),
           ),

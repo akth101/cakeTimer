@@ -15,47 +15,49 @@ class wholeCakeList extends StatefulWidget {
 
 class _wholeCakeListState extends State<wholeCakeList> {
 
+  // Future<bool> cakeDisplayState async (String cakename) {
+
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final keys = prefs.getKeys();
+
+  //   for (String key in keys) {
+  //     String? value = prefs.getString(key);
+  //     if (value == cakename) {
+  //       String? cakeKeyValue = key.split("-").last;
+  //       for (String key in keys) {
+
+  //       }
+
+  //     }
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CakeDataBase>(
   builder: (context, cakeDatabase, child) {
     return ListView.builder(
-      itemCount: cakeDatabase.cakeNameList.length,
+      itemCount: cakeDatabase.cakeNameList.length + 1,
       itemBuilder: (context, index) {
+        if (index == cakeDatabase.cakeNameList.length) {
+          return const ListTile(
+            title: Text("추가"),
+          );
+        }
+        else {
         return ListTile(
           title: Text(cakeDatabase.cakeNameList[index]),
-        );
+          // trailing: Switch(
+          //   value: cakeDisplayState(cakeDatabase, cakeDatabase.cakeNameList[index]),
+          //   onChanged: ,
+          // ),
+          );
+        }
       }
       );
    },
   );
   }
-
-  // ListView cakeListview() {
-  //   return ListView.builder(
-  //     itemCount: _cakeList.length,
-  //     itemBuilder: (context, index) {
-  //       print("index: $index");
-  //       // print("index: $index");
-  //       // if (index == _cakeList.length) {
-  //       //   return const ListTile(
-  //       //     title: Text("추가"),
-  //       //   );
-  //       // }
-  //       // else {
-  //       return ListTile(
-  //         title: Text(_cakeList[index]),
-  //         // trailing: Switch(
-  //         //   value: true,
-  //         //   onChanged: (bool value) {
-  //         //     value = false;
-  //         //   },
-  //         // ),
-  //         );
-  //       // }
-  //     },
-  //   );
-  // }
 
 
 }

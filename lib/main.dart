@@ -34,11 +34,15 @@ class CakeDataBase extends ChangeNotifier {
   int? displayOnList;
 
   Map<String, cakeWidget> _cakes = {};
+  Map<String, int> _cakeDisplay = {};
   List<cakeWidget> _elapsedCakes = [];
   List<cakeWidget> _elapsingCakes = [];
   List<String> _cakeNameList = [];
 
   //각 맵 or 리스트 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
+  Map<String, cakeWidget> get cakes => _cakes;
+  Map<String, int> get cakeDisplay => _cakeDisplay;
+
   List<cakeWidget> get elapsedCakes => _elapsedCakes;
   List<cakeWidget> get elapsingCakes => _elapsingCakes;
   List<String> get cakeNameList => _cakeNameList;
@@ -50,18 +54,19 @@ class CakeDataBase extends ChangeNotifier {
   Future<void> _initialize() async {
     await loadFromPreferences();
     await makeCakeNameList();
+    await makeCakeDisplay();
     makeElapsedAndElapsingCakeList();
   }
 
   Future<void> loadIsElapseCompleted(String cakeKey) async {
     final prefs = await SharedPreferences.getInstance();
-      isElapseCompleted = prefs.getInt('isElapseCompleted-$cakeKey');
+      isElapseCompleted = prefs.getInt('isElapseCompleted_$cakeKey');
       notifyListeners();
   }
 
     Future<void> loadDisplayOnList(String cakeKey) async {
     final prefs = await SharedPreferences.getInstance();
-      displayOnList = prefs.getInt('displayonlist-$cakeKey');
+      displayOnList = prefs.getInt('displayonlist_$cakeKey');
       notifyListeners();
   }
 
@@ -79,8 +84,8 @@ class CakeDataBase extends ChangeNotifier {
     //_loadisElapseCompleted는 비동기이기 때문에 작업이 완료되길 기다린 후에 아래 코드로 넘어간다.
     //안 그러면 isElapseCompleted에는 null값이 들어가게 된다. 
     for (String key in keys) {
-      if (key.startsWith('cakename-')) {
-        cakeKeyValue = key.split('-').last;
+      if (key.startsWith('cakename_')) {
+        cakeKeyValue = key.split('_').last;
           await loadIsElapseCompleted(cakeKeyValue);
           await loadDisplayOnList(cakeKeyValue);
           String mapKey = "$cakeKeyValue.$isElapseCompleted.$displayOnList";
@@ -91,6 +96,8 @@ class CakeDataBase extends ChangeNotifier {
 
   void reBuildCakeList() async {
     await loadFromPreferences();
+    await makeCakeNameList();
+    await makeCakeDisplay();
     makeElapsedAndElapsingCakeList();
     notifyListeners();
   }
@@ -118,7 +125,8 @@ class CakeDataBase extends ChangeNotifier {
       if (isElapseCompleted == "1" && displayOnList == "1") {
         _elapsedCakes.add(cakeWidget(cakeKey: cakeKeyValue));
       }
-    });
+    }
+  );
 
     // print("elapsing: ");
     // print(_elapsingCakes);
@@ -135,7 +143,7 @@ class CakeDataBase extends ChangeNotifier {
     final keys = prefs.getKeys();
 
     for (String key in keys) {
-      if (key.startsWith('cakename-')) {
+      if (key.startsWith('cakename_')) {
           String? cakeName = prefs.getString(key);
           if (cakeName == null) {
             print("Error");
@@ -147,8 +155,31 @@ class CakeDataBase extends ChangeNotifier {
       }
       print("wholeCakeSettingpagelist:");
       print(cakeNameList);
-
+      notifyListeners();
     }
+
+   Future<void> makeCakeDisplay() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+
+    for (String key in keys) {
+      if (key.startsWith('cakename_')) {
+          String id = key.split('-')[1];
+          String? cakeName = prefs.getString(key);
+          int? display = prefs.getInt('displayonlist_$id');
+          print(cakeName);
+          print(display);
+          if (cakeName != null && display != null) {
+            _cakeDisplay[cakeName] = display;
+          }
+      }
+    }
+      print("makeCakeDisplay:");
+      print(_cakeDisplay);
+      notifyListeners();
+   }
+
+
 
     void reorderElapsingCakes(int oldIndex, int newIndex) {
     if (newIndex > oldIndex) {

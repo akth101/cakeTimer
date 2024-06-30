@@ -27,7 +27,7 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
   Future<void> _loadCakeName() async {
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
     setState(() {
-      cakeName = _prefs.getString('cakename-${widget.cakeKey}');
+      cakeName = _prefs.getString('cakename_${widget.cakeKey}');
     });
   }
 
