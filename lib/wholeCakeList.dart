@@ -1,7 +1,8 @@
 
 
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 
 
@@ -13,52 +14,48 @@ class wholeCakeList extends StatefulWidget {
 }
 
 class _wholeCakeListState extends State<wholeCakeList> {
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("홀케익 목록 설정"),
-      ),
-      body: Row(
-        children: [
-          TextButton(
-            onPressed: () {
-              print("pressed TextButton");
-            }
-            , child: Text(
-              "홀케익 추가",
-            ),
-          ),
-        ],
-      ),
-    );
+    return Consumer<CakeDataBase>(
+  builder: (context, cakeDatabase, child) {
+    return ListView.builder(
+      itemCount: cakeDatabase.cakeNameList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(cakeDatabase.cakeNameList[index]),
+        );
+      }
+      );
+   },
+  );
   }
-}
 
-class showList extends StatefulWidget {
-  const showList({super.key});
+  // ListView cakeListview() {
+  //   return ListView.builder(
+  //     itemCount: _cakeList.length,
+  //     itemBuilder: (context, index) {
+  //       print("index: $index");
+  //       // print("index: $index");
+  //       // if (index == _cakeList.length) {
+  //       //   return const ListTile(
+  //       //     title: Text("추가"),
+  //       //   );
+  //       // }
+  //       // else {
+  //       return ListTile(
+  //         title: Text(_cakeList[index]),
+  //         // trailing: Switch(
+  //         //   value: true,
+  //         //   onChanged: (bool value) {
+  //         //     value = false;
+  //         //   },
+  //         // ),
+  //         );
+  //       // }
+  //     },
+  //   );
+  // }
 
-  @override
-  State<showList> createState() => _showListState();
-}
 
-class _showListState extends State<showList> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class hideList extends StatefulWidget {
-  const hideList({super.key});
-
-  @override
-  State<hideList> createState() => _hideListState();
-}
-
-class _hideListState extends State<hideList> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
 }

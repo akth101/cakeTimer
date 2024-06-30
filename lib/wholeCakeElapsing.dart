@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 import 'main.dart';
-import 'cakeWidget.dart';
 
 class wholeCakeElapsing extends StatefulWidget {
   const wholeCakeElapsing({super.key});
@@ -31,7 +30,7 @@ class _wholeCakeElapsingState extends State<wholeCakeElapsing> {
       itemBuilder: (context, index) {
         final cake = cakeDatabase.elapsingCakes[index];
         return Card(
-          key: ValueKey(cake.value),
+          key: ValueKey(cake.cakeKey),
           child: cake,
         );
        },

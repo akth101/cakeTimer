@@ -30,7 +30,7 @@ class _wholeCakeElapsedState extends State<wholeCakeElapsed> {
       itemBuilder: (context, index) {
         final cake = cakeDatabase.elapsedCakes[index];
         return Card(
-          key: ValueKey(cake.value),
+          key: ValueKey(cake.cakeKey),
           child: cake,
         );
        },

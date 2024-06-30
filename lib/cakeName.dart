@@ -3,15 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class cakeNameSetting extends StatefulWidget {
 
-  final int value;
+  final String cakeKey;
 
-  const cakeNameSetting({Key? key, required this.value}) : super(key: key);
+  const cakeNameSetting({Key? key, required this.cakeKey}) : super(key: key);
 
   @override
   State<cakeNameSetting> createState() => _cakeNameSettingState();
 }
 
-//hello
 class _cakeNameSettingState extends State<cakeNameSetting> {
 
   // SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -28,7 +27,7 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
   Future<void> _loadCakeName() async {
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
     setState(() {
-      cakeName = _prefs.getString('cakename-${widget.value}');
+      cakeName = _prefs.getString('cakename-${widget.cakeKey}');
     });
   }
 

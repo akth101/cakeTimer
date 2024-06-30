@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timer/cakeWidget.dart';
-import 'package:timer/pieceCakeElapsed.dart';
-import 'pieceCakeElapsing.dart';
+import 'package:timer/wholeCakeList.dart';
 import 'wholeCakeElapsing.dart';
 import 'wholeCakeElapsed.dart';
 import 'package:provider/provider.dart';
@@ -30,14 +29,19 @@ class CakeDataBase extends ChangeNotifier {
 
   static CakeDataBase get instance => _instance;
 
+  //mapkey를 만들기 위한 재료들
   int? isElapseCompleted;
+  int? displayOnList;
+
   Map<String, cakeWidget> _cakes = {};
   List<cakeWidget> _elapsedCakes = [];
   List<cakeWidget> _elapsingCakes = [];
+  List<String> _cakeNameList = [];
 
-  //Elapsing & Elapsed 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
+  //각 맵 or 리스트 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
   List<cakeWidget> get elapsedCakes => _elapsedCakes;
   List<cakeWidget> get elapsingCakes => _elapsingCakes;
+  List<String> get cakeNameList => _cakeNameList;
 
   CakeDataBase._internal() {
     _initialize();
@@ -45,13 +49,19 @@ class CakeDataBase extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await loadFromPreferences();
+    await makeCakeNameList();
     makeElapsedAndElapsingCakeList();
   }
 
-
-  Future<void> loadIsElapseCompleted(int value) async {
+  Future<void> loadIsElapseCompleted(String cakeKey) async {
     final prefs = await SharedPreferences.getInstance();
-      isElapseCompleted = prefs.getInt('isElapseCompleted-$value');
+      isElapseCompleted = prefs.getInt('isElapseCompleted-$cakeKey');
+      notifyListeners();
+  }
+
+    Future<void> loadDisplayOnList(String cakeKey) async {
+    final prefs = await SharedPreferences.getInstance();
+      displayOnList = prefs.getInt('displayonlist-$cakeKey');
       notifyListeners();
   }
 
@@ -60,26 +70,24 @@ class CakeDataBase extends ChangeNotifier {
     _cakes.clear();
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys();
+
     String cakeKeyValue;
-    int? intKeyValue;
 
     //shared에서 케익 정보를 불러와 map을 만드는 for문.
     //map에는 아래와 같이 데이터가 저장된다
     //key: cakeKey.isElapseCompleted, value: cakeWidget
+    //_loadisElapseCompleted는 비동기이기 때문에 작업이 완료되길 기다린 후에 아래 코드로 넘어간다.
+    //안 그러면 isElapseCompleted에는 null값이 들어가게 된다. 
     for (String key in keys) {
       if (key.startsWith('cakename-')) {
         cakeKeyValue = key.split('-').last;
-        intKeyValue = int.tryParse(cakeKeyValue);
-        if (intKeyValue != null) {
-          //_loadisElapseCompleted는 비동기이기 때문에 작업이 완료되길 기다린 후에 아래 코드로 넘어간다.
-          //안 그러면 isElapseCompleted에는 null값이 들어가게 된다. 
-          await loadIsElapseCompleted(intKeyValue);
-          String mapKey = "$intKeyValue.$isElapseCompleted";
-          _cakes[mapKey] = cakeWidget(value: intKeyValue);
+          await loadIsElapseCompleted(cakeKeyValue);
+          await loadDisplayOnList(cakeKeyValue);
+          String mapKey = "$cakeKeyValue.$isElapseCompleted.$displayOnList";
+          _cakes[mapKey] = cakeWidget(cakeKey: cakeKeyValue);
         }
       }
     }
-  }
 
   void reBuildCakeList() async {
     await loadFromPreferences();
@@ -88,22 +96,27 @@ class CakeDataBase extends ChangeNotifier {
   }
 
   void makeElapsedAndElapsingCakeList() {
-
     _elapsingCakes.clear();
     _elapsedCakes.clear();
     _cakes.forEach((key, value) {
-      String? _isElapseCompleted = key.split(".").last;
-      String? _cakeValue = key.split(".").first;
-      int? _intCakeValue = int.tryParse(_cakeValue);
-      int _nonNullCakeValue = _intCakeValue!;
-      print("key: $_cakeValue");
-      print("isElapseCompleted: $_isElapseCompleted");
+      List<String> values = key.split('.');
 
-      if (_isElapseCompleted == "0") {
-        _elapsingCakes.add(cakeWidget(value: _nonNullCakeValue));
+      String cakeKeyValue = values[0] ;
+      String isElapseCompleted = values[1];
+      String displayOnList = values[2];
+
+      //임시로 이렇게 박아놨음
+      //임시로 이렇게 박아놨음
+      //임시로 이렇게 박아놨음
+      displayOnList = "1";
+      // print("cakeValue: $cakeKeyValue");
+      // print("isElapseCompleted: $isElapseCompleted");
+      // print("displayOnList: $displayOnList");
+      if (isElapseCompleted == "0" && displayOnList == "1") {
+        _elapsingCakes.add(cakeWidget(cakeKey: cakeKeyValue));
       }
-      if (_isElapseCompleted == "1") {
-        _elapsedCakes.add(cakeWidget(value: _nonNullCakeValue));
+      if (isElapseCompleted == "1" && displayOnList == "1") {
+        _elapsedCakes.add(cakeWidget(cakeKey: cakeKeyValue));
       }
     });
 
@@ -111,8 +124,31 @@ class CakeDataBase extends ChangeNotifier {
     // print(_elapsingCakes);
     // print("elapsed: ");
     // print(_elapsedCakes);
+
+
+
     notifyListeners();
   }
+
+ Future<void> makeCakeNameList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+
+    for (String key in keys) {
+      if (key.startsWith('cakename-')) {
+          String? cakeName = prefs.getString(key);
+          if (cakeName == null) {
+            print("Error");
+          }
+          else {
+            cakeNameList.add(cakeName);
+          }
+        }
+      }
+      print("wholeCakeSettingpagelist:");
+      print(cakeNameList);
+
+    }
 
     void reorderElapsingCakes(int oldIndex, int newIndex) {
     if (newIndex > oldIndex) {
@@ -186,11 +222,16 @@ class _MyAppState extends State<MyApp> {
 
                 },
                 child: const Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: EdgeInsets.only(top: 10.0),
                   child: Icon(Icons.settings),
                   ),
               ),
               destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.settings),
+                  selectedIcon: Icon(Icons.cake_outlined),
+                  label: Text('홀케익 설정'),
+                ),
                 NavigationRailDestination(
                   icon: Icon(Icons.cake_outlined),
                   selectedIcon: Icon(Icons.cake_outlined),
@@ -200,16 +241,6 @@ class _MyAppState extends State<MyApp> {
                   icon: Icon(Icons.cake_rounded),
                   selectedIcon: Icon(Icons.cake_rounded),
                   label: Text('홀 해동 완'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.cake),
-                  selectedIcon: Icon(Icons.person),
-                  label: Text('조각 해동 중'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.person),
-                  selectedIcon: Icon(Icons.person),
-                  label: Text('조각 해동 완'),
                 ),
               ],
             ),
@@ -225,13 +256,11 @@ class _MyAppState extends State<MyApp> {
   Widget _buildSelectedScreen(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return const wholeCakeElapsing();
+        return const wholeCakeList();
       case 1:
-        return const wholeCakeElapsed();
-      case 2:
-        return const pieceCakeElapsing();
+        return wholeCakeElapsing();
       default:
-        return const pieceCakeElapsed();
+        return const wholeCakeElapsed();
     }
   }
 }

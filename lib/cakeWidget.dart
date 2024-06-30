@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'cakeTimerUI.dart';
+import 'caketimerUI.dart';
 
-class cakeWidget extends StatelessWidget {
-  final int value;
+class cakeWidget extends StatefulWidget {
+  final String cakeKey;
+  
+    const cakeWidget({
+    Key? key,
+    required this.cakeKey,
+  }) : super(key: key);
 
-  const cakeWidget(
-      {super.key,
-      required this.value,
-      });
+  @override
+  State<cakeWidget> createState() => _cakeWidgetState();
+}
 
+class _cakeWidgetState extends State<cakeWidget> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -25,7 +30,7 @@ class cakeWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CakeTimerUI(value: value),
+          CakeTimerUI(cakeKey: widget.cakeKey),
         ],
       ),
     );

@@ -11,10 +11,11 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'dart:io';
 
 class TimerFunction extends StatefulWidget {
-  final int value;
+  final String cakeKey;
+
   const TimerFunction(
       {Key? key,
-      required this.value,
+      required this.cakeKey,
       })
       : super(key: key);
 
@@ -72,7 +73,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<String?> _loadImagePath() async {
     _prefs = await SharedPreferences.getInstance();
-    return _prefs.getString('imagePath${widget.value}');
+    return _prefs.getString('imagePath${widget.cakeKey}');
   }
 
   Future<void> _loadImage() async {
@@ -87,7 +88,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   Future<void> _loadIsElapseCompleted() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      isElapseCompleted = _prefs.getInt('isElapseCompleted-${widget.value}');
+      isElapseCompleted = _prefs.getInt('isElapseCompleted-${widget.cakeKey}');
     });
   }
 
@@ -95,7 +96,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       ringAlarmSoundOnlyOnce =
-          _prefs.getInt('ringAlarmSoundOnlyOnce-${widget.value}');
+          _prefs.getInt('ringAlarmSoundOnlyOnce-${widget.cakeKey}');
       ringAlarmSoundOnlyOnce ??= 0;
     });
   }
@@ -103,7 +104,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   Future<void> _loadSoundSetting() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      soundSetting = _prefs.getInt('soundSetting-${widget.value}');
+      soundSetting = _prefs.getInt('soundSetting-${widget.cakeKey}');
       soundSetting ??= 0;
     });
   }
@@ -111,21 +112,21 @@ class _TimerFunctionState extends State<TimerFunction> {
   Future<void> _loadStartTimeBackUp() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      startTime = _prefs.getString('startTimeBackUp-${widget.value}');
+      startTime = _prefs.getString('startTimeBackUp-${widget.cakeKey}');
     });
   }
 
   Future<void> _loadCakeName() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      cakeName = _prefs.getString('cakename-${widget.value}');
+      cakeName = _prefs.getString('cakename-${widget.cakeKey}');
     });
   }
 
   Future<void> _loadPreviousTimerState() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      startTime = _prefs.getString('startTime-${widget.value}');
+      startTime = _prefs.getString('startTime-${widget.cakeKey}');
     });
 
     if (startTime != null) {
@@ -146,8 +147,8 @@ class _TimerFunctionState extends State<TimerFunction> {
   Future<void> _loadSelectedTime() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      selectedHour = _prefs.getInt('selectedHour-${widget.value}');
-      selectedMinute = _prefs.getInt('selectedMinute-${widget.value}');
+      selectedHour = _prefs.getInt('selectedHour-${widget.cakeKey}');
+      selectedMinute = _prefs.getInt('selectedMinute-${widget.cakeKey}');
       convertedHour = selectedHour ?? 1;
       convertedMinute = selectedMinute ?? 0;
     });
@@ -159,12 +160,12 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> _saveImagePath(String? imagePath) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString('imagePath${widget.value}', imagePath!);
+    await _prefs.setString('imagePath${widget.cakeKey}', imagePath!);
   }
 
   Future<void> _saveIsElapseCompleted(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('isElapseCompleted-${widget.value}', num);
+    await _prefs.setInt('isElapseCompleted-${widget.cakeKey}', num);
     setState(() {
       isElapseCompleted = num;
     });
@@ -176,7 +177,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> _saveSoundSetting(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('soundSetting-${widget.value}', num);
+    await _prefs.setInt('soundSetting-${widget.cakeKey}', num);
     setState(() {
       soundSetting = num;
     });
@@ -184,7 +185,7 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> _saveRingAlarmSoundOnlyOnce(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('ringAlarmSoundOnlyOnce-${widget.value}', num);
+    await _prefs.setInt('ringAlarmSoundOnlyOnce-${widget.cakeKey}', num);
     setState(() {
       ringAlarmSoundOnlyOnce = num;
     });
@@ -192,17 +193,17 @@ class _TimerFunctionState extends State<TimerFunction> {
 
   Future<void> _saveStartTime(String? startTime) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString('startTime-${widget.value}', startTime!);
+    await _prefs.setString('startTime-${widget.cakeKey}', startTime!);
   }
 
   Future<void> _saveStartTimeBackUp(String? startTime) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setString('startTimeBackUp-${widget.value}', startTime!);
+    await _prefs.setString('startTimeBackUp-${widget.cakeKey}', startTime!);
   }
 
   void deleteStartTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('startTime-${widget.value}');
+    prefs.remove('startTime-${widget.cakeKey}');
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -468,15 +469,9 @@ class _TimerFunctionState extends State<TimerFunction> {
                 if (isPhotoTouched == 0) {
                   startTimers();
                   isPhotoTouched = 1;
-                } else if (isPhotoTouched == 1 &&
-                    1 <= widget.value &&
-                    widget.value <= 8) {
+                }
+                else if (isPhotoTouched == 1) {
                   showAlertPopUp();
-                  isPhotoTouched = 0;
-                } else if (isPhotoTouched == 1 &&
-                    9 <= widget.value &&
-                    widget.value <= 24) {
-                  showAlertPopUpForPieceCake();
                   isPhotoTouched = 0;
                 }
               });
@@ -488,7 +483,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                     context: context,
                     builder: ((BuildContext context) {
                       return IndividualSetting(
-                        value: widget.value,
+                        cakeKey: widget.cakeKey,
                         saveIsNeedToRecovered: saveIsNeedToRecovered,
                         fetchSoundSetting: fetchSoundSetting,
                         isSelectedTimeChanged: isSelectedTimeChanged,
@@ -626,7 +621,7 @@ class _TimerFunctionState extends State<TimerFunction> {
       _saveRingAlarmSoundOnlyOnce(1);
       _prefs = await SharedPreferences.getInstance();
       setState(() {
-        startTime = _prefs.getString('startTimeBackUp-${widget.value}');
+        startTime = _prefs.getString('startTimeBackUp-${widget.cakeKey}');
       });
       isPhotoTouched = 1;
 

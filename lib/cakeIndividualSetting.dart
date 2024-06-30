@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class IndividualSetting extends StatefulWidget {
-  final int value;
+  final String cakeKey;
   final void Function(int) saveIsNeedToRecovered;
   final void Function(int) fetchSoundSetting;
   final void Function(int, int) isSelectedTimeChanged;
 
   const IndividualSetting({
     Key? key,
-    required this.value,
+    required this.cakeKey,
     required this.saveIsNeedToRecovered,
     required this.fetchSoundSetting,
     required this.isSelectedTimeChanged,
@@ -30,34 +31,45 @@ class _IndividualSettingState extends State<IndividualSetting> {
   int _convertedHour = 0;
   int _convertedMinute = 0;
 
+  ////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////save to shared-preference/////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////
+
   Future<void> _saveSoundSetting(int num) async {
     _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('soundSetting-${widget.value}', num);
+    await _prefs.setInt('soundSetting-${widget.cakeKey}', num);
     setState(() {
       soundSetting = num;
     });
   }
 
+  Future<void> _saveSelectedTime(int hour, int minute) async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setInt('selectedHour-${widget.cakeKey}', hour);
+    await _prefs.setInt('selectedMinute-${widget.cakeKey}', minute);
+  }
+
+
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////load from shared-preference/////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////
+
   Future<void> _loadSoundSetting() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      soundSetting = _prefs.getInt('soundSetting-${widget.value}');
+      soundSetting = _prefs.getInt('soundSetting-${widget.cakeKey}');
       //만약에 데이터 못받아오면 0으로 설정
       soundSetting ??= 0;
     });
   }
 
-  Future<void> _saveSelectedTime(int hour, int minute) async {
-    _prefs = await SharedPreferences.getInstance();
-    await _prefs.setInt('selectedHour-${widget.value}', hour);
-    await _prefs.setInt('selectedMinute-${widget.value}', minute);
-  }
 
   Future<void> _loadSelectedTime() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedHour = _prefs.getInt('selectedHour-${widget.value}')!;
-      _selectedMinute = _prefs.getInt('selectedMinute-${widget.value}')!;
+      _selectedHour = _prefs.getInt('selectedHour-${widget.cakeKey}')!;
+      _selectedMinute = _prefs.getInt('selectedMinute-${widget.cakeKey}')!;
       _convertedHour = _selectedHour ?? 1;
       _convertedMinute = _selectedMinute ?? 0;
     });
@@ -90,24 +102,15 @@ class _IndividualSettingState extends State<IndividualSetting> {
         _selectedMinute = result.minute;
         _convertedHour = _selectedHour ?? 1;
         _convertedMinute = _selectedMinute ?? 0;
-        print("pickTime");
-        print("convertedHour: $_convertedHour");
-        print("convertedMinute: $_convertedMinute");
+        // print("pickTime");
+        // print("convertedHour: $_convertedHour");
+        // print("convertedMinute: $_convertedMinute");
       });
       _saveSelectedTime(_convertedHour, _convertedMinute);
       widget.isSelectedTimeChanged(_convertedHour, _convertedMinute);
     }
   }
 
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
-  //여기 고쳐야 되지 않나? super.initState를 위로??
   //여기 고쳐야 되지 않나? super.initState를 위로??
   @override
   void initState() {
@@ -123,7 +126,7 @@ class _IndividualSettingState extends State<IndividualSetting> {
   }
 
   Widget dialogContent(
-      BuildContext context, String title, String content, int value) {
+      BuildContext context, String title, String content, String cakeKey) {
     late SharedPreferences prefs;
 
     return Container(
@@ -144,15 +147,19 @@ class _IndividualSettingState extends State<IndividualSetting> {
             ),
           ),
           const SizedBox(height: 10.0), //여백
-          TextField(controller: _textEditingController), //텍스트 입력창
+          TextField(controller: _textEditingController), //케익 이름 입력창
           const SizedBox(height: 10.0), //여백
           ElevatedButton(
-            //텍스트 저장 버튼
+            //케익 이름 저장 버튼
             onPressed: () async {
               prefs = await SharedPreferences.getInstance();
+              String id = const Uuid().v4();
               await prefs.setString(
-                  'cakename-$value', _textEditingController.text);
-              // cakeNameSetting(value: widget.value);
+                  'cakename-$id', _textEditingController.text);
+            //케익 이름을 저장할 때 elapsing 리스트에 보이는 것을 기본값으로 저장
+              await prefs.setInt(
+                  'displayonlist-$id', 1
+              );
             },
             child: const Text('저장'),
           ),
@@ -199,7 +206,7 @@ class _IndividualSettingState extends State<IndividualSetting> {
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      child: dialogContent(context, '설정', 'content', widget.value),
+      child: dialogContent(context, '설정', 'content', widget.cakeKey),
     );
   }
 }
