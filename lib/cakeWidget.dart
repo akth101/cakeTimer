@@ -24,7 +24,7 @@ class _cakeWidgetState extends State<cakeWidget> {
       height: screenHeight / 2 - screenWidth * 0.03,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(10),
         color: const Color.fromRGBO(224, 224, 224, 1),
       ),
       child: Column(

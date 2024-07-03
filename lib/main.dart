@@ -34,15 +34,14 @@ class CakeDataBase extends ChangeNotifier {
   int? displayOnList;
 
   Map<String, cakeWidget> _cakes = {};
-  Map<String, int> _cakeDisplay = {};
+  Map<String, bool> _cakeDisplay = {};
   List<cakeWidget> _elapsedCakes = [];
   List<cakeWidget> _elapsingCakes = [];
   List<String> _cakeNameList = [];
 
   //각 맵 or 리스트 프라이빗 변수에 대한 외부에서의 읽기 전용 접근을 제공
   Map<String, cakeWidget> get cakes => _cakes;
-  Map<String, int> get cakeDisplay => _cakeDisplay;
-
+  Map<String, bool> get cakeDisplay => _cakeDisplay;
   List<cakeWidget> get elapsedCakes => _elapsedCakes;
   List<cakeWidget> get elapsingCakes => _elapsingCakes;
   List<String> get cakeNameList => _cakeNameList;
@@ -107,15 +106,9 @@ class CakeDataBase extends ChangeNotifier {
     _elapsedCakes.clear();
     _cakes.forEach((key, value) {
       List<String> values = key.split('.');
-
       String cakeKeyValue = values[0] ;
       String isElapseCompleted = values[1];
       String displayOnList = values[2];
-
-      //임시로 이렇게 박아놨음
-      //임시로 이렇게 박아놨음
-      //임시로 이렇게 박아놨음
-      displayOnList = "1";
       // print("cakeValue: $cakeKeyValue");
       // print("isElapseCompleted: $isElapseCompleted");
       // print("displayOnList: $displayOnList");
@@ -132,15 +125,14 @@ class CakeDataBase extends ChangeNotifier {
     // print(_elapsingCakes);
     // print("elapsed: ");
     // print(_elapsedCakes);
-
-
-
     notifyListeners();
   }
 
  Future<void> makeCakeNameList() async {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys();
+
+    cakeNameList.clear();
 
     for (String key in keys) {
       if (key.startsWith('cakename_')) {
@@ -164,19 +156,50 @@ class CakeDataBase extends ChangeNotifier {
 
     for (String key in keys) {
       if (key.startsWith('cakename_')) {
-          String id = key.split('-')[1];
+          String id = key.split('_').last;
           String? cakeName = prefs.getString(key);
           int? display = prefs.getInt('displayonlist_$id');
-          print(cakeName);
-          print(display);
+          print("cakeName: $cakeName");
+          print("display: $display");
           if (cakeName != null && display != null) {
-            _cakeDisplay[cakeName] = display;
+            if (display == 1) {
+              _cakeDisplay[cakeName] = true;
+            }
+            else {
+              _cakeDisplay[cakeName] = false;
+            }
           }
       }
     }
       print("makeCakeDisplay:");
-      print(_cakeDisplay);
+      _cakeDisplay.forEach((key, value) {
+    print('Key: $key, Value: $value');
+  });
       notifyListeners();
+   }
+
+   Future<void> updateCakeDisplay (String cakeName, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys(); 
+
+    for (String key in keys) {
+     if (key.startsWith("cakename_")) {
+        String? compareCakeName = prefs.getString(key);
+        if (cakeName == compareCakeName) {
+          String id = key.split('_').last;
+          if (value == true) {
+            await prefs.setInt("displayonlist_$id", 1);
+            break ;
+          }
+          else {
+            await prefs.setInt("displayonlist_$id", 0);
+            break ;
+          }
+        }
+     }
+    }
+    reBuildCakeList();
+    notifyListeners();
    }
 
 
@@ -259,11 +282,6 @@ class _MyAppState extends State<MyApp> {
               ),
               destinations: const [
                 NavigationRailDestination(
-                  icon: Icon(Icons.settings),
-                  selectedIcon: Icon(Icons.cake_outlined),
-                  label: Text('홀케익 설정'),
-                ),
-                NavigationRailDestination(
                   icon: Icon(Icons.cake_outlined),
                   selectedIcon: Icon(Icons.cake_outlined),
                   label: Text('홀 해동 중'),
@@ -272,6 +290,11 @@ class _MyAppState extends State<MyApp> {
                   icon: Icon(Icons.cake_rounded),
                   selectedIcon: Icon(Icons.cake_rounded),
                   label: Text('홀 해동 완'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.settings_suggest_sharp),
+                  selectedIcon: Icon(Icons.settings_suggest_sharp),
+                  label: Text('홀케익 설정'),
                 ),
               ],
             ),
@@ -287,11 +310,11 @@ class _MyAppState extends State<MyApp> {
   Widget _buildSelectedScreen(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return const wholeCakeList();
+        return const wholeCakeElapsing();
       case 1:
-        return wholeCakeElapsing();
-      default:
         return const wholeCakeElapsed();
+      default:
+        return const wholeCakeList();
     }
   }
 }

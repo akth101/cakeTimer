@@ -221,11 +221,11 @@ class _TimerFunctionState extends State<TimerFunction> {
     _loadSelectedTime();
   }
 
-  // @override
-  // void dispose() {
-  //   _player.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    timeTimer?.cancel();
+    super.dispose();
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////Timers///////////////////////////////////////
