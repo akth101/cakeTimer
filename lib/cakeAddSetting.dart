@@ -116,6 +116,8 @@ class _CakeAddSettingState extends State<CakeAddSetting> {
         MediaQueryData mediaQueryData = MediaQuery.of(context);
         double screenWidth = mediaQueryData.size.width;
         double screenHeight = mediaQueryData.size.height;
+        print("screenWidth: $screenWidth");
+        print("screenHeight: $screenHeight");
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

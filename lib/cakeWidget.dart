@@ -20,8 +20,8 @@ class _cakeWidgetState extends State<cakeWidget> {
     double screenWidth = mediaQueryData.size.width;
     double screenHeight = mediaQueryData.size.height;
     return Container(
-      width: screenWidth / 4 - screenWidth * 0.02,
-      height: screenHeight / 2 - screenWidth * 0.03,
+      width: (screenWidth - 80) / 4 - screenWidth * 0.02,
+      height: screenHeight / 2 - screenHeight * 0.03,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

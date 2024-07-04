@@ -147,18 +147,18 @@ class _IndividualSettingState extends State<IndividualSetting> {
             ),
           ),
           const SizedBox(height: 10.0), //여백
-          TextField(controller: _textEditingController), //케익 이름 입력창
-          const SizedBox(height: 10.0), //여백
-          ElevatedButton(
-            //케익 이름 저장 버튼
-            onPressed: () async {
-              prefs = await SharedPreferences.getInstance();
-              String id = const Uuid().v4();
-              await prefs.setString('cakename_$id', _textEditingController.text);
-              await prefs.setInt('displayonlist_$id', 1);
-            },
-            child: const Text('저장'),
-          ),
+          // TextField(controller: _textEditingController), //케익 이름 입력창
+          // const SizedBox(height: 10.0), //여백
+          // ElevatedButton(
+          //   //케익 이름 저장 버튼
+          //   onPressed: () async {
+          //     prefs = await SharedPreferences.getInstance();
+          //     String id = const Uuid().v4();
+          //     await prefs.setString('cakename_$id', _textEditingController.text);
+          //     await prefs.setInt('displayonlist_$id', 1);
+          //   },
+          //   child: const Text('저장'),
+          // ),
           IconButton(
             onPressed: () {
               regulateSoundSetting();
@@ -167,19 +167,19 @@ class _IndividualSettingState extends State<IndividualSetting> {
                 ? Icons.notifications_active
                 : Icons.notifications_active_outlined),
           ),
-          const SizedBox(height: 20.0), //여백
+          const SizedBox(height: 10.0), //여백
           ElevatedButton(
               //복구 버튼
               onPressed: () {
                 widget.saveIsNeedToRecovered(1);
               },
-              child: const Text('복구')),
+              child: const Text('직전 시간 복구')),
           const SizedBox(height: 20.0), //여백
           ElevatedButton(
             onPressed: () {
               pickTime();
             },
-            child: const Text("시간 변경"),
+            child: const Text("해동 시간 변경"),
           ),
           const SizedBox(height: 20.0), //여백
           ElevatedButton(

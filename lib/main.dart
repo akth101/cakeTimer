@@ -227,7 +227,6 @@ class CakeDataBase extends ChangeNotifier {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  //annotaiton
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -264,37 +263,40 @@ class _MyAppState extends State<MyApp> {
               onDestinationSelected: _onItemTapped,
               groupAlignment: 0,
               labelType: NavigationRailLabelType.selected,
-              
-              leading: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => 
-                    const settings(),
+              minWidth: 80,
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => 
+                      const settings(),
+                      ),
+                    );
+                
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Icon(Icons.settings, size: 32,),
                     ),
-                  );
-
-                },
-                child: const Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Icon(Icons.settings),
-                  ),
+                ),
               ),
               destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.cake_outlined),
                   selectedIcon: Icon(Icons.cake_outlined),
-                  label: Text('홀 해동 중'),
+                  label: Text('해동 중'),
                 ),
                 NavigationRailDestination(
                   icon: Icon(Icons.cake_rounded),
                   selectedIcon: Icon(Icons.cake_rounded),
-                  label: Text('홀 해동 완'),
+                  label: Text('해동 완'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.settings_suggest_sharp),
-                  selectedIcon: Icon(Icons.settings_suggest_sharp),
-                  label: Text('홀케익 설정'),
+                  icon: Icon(Icons.electric_bolt_sharp),
+                  selectedIcon: Icon(Icons.electric_bolt_sharp),
+                  label: Text('빠른 설정'),
                 ),
               ],
             ),

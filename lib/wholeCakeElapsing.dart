@@ -12,8 +12,17 @@ class wholeCakeElapsing extends StatefulWidget {
 
 class _wholeCakeElapsingState extends State<wholeCakeElapsing> {
 
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double itemWidth = (screenWidth - 80) / 4 - screenWidth * 0.02;
+    double itemHeight = (screenHeight - 80) / 2 - screenHeight * 0.03;
+    double childAspectRatio = itemWidth / itemHeight;
+
+
   return Consumer<CakeDataBase>(
   builder: (context, cakeDatabase, child) {
     return ReorderableGridView.builder(
@@ -22,9 +31,9 @@ class _wholeCakeElapsingState extends State<wholeCakeElapsing> {
         cakeDatabase.reorderElapsingCakes(oldIndex, newIndex);
       },
       //gridDelegate: 각 셀의 크기를 결정
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        childAspectRatio: 0.7,
+        childAspectRatio: childAspectRatio,
       ),
       //itemCount 속성에 의해 itemBuilder가 몇 번 호출될지 결정된다.
       itemBuilder: (context, index) {

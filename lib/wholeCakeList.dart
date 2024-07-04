@@ -40,7 +40,11 @@ class _wholeCakeListState extends State<wholeCakeList> {
     prefs.remove("isElapseCompleted_$id");
     prefs.remove("selectedHour_$id");
     prefs.remove("selectedMinute_$id");
+    prefs.remove("soundSetting_$id");
     prefs.remove("imagePath_$id");
+    prefs.remove("ringAlarmSoundOnlyOnce_$id");
+    prefs.remove("startTimeBackUp_$id");
+    prefs.remove("startTime_$id");
     return ;
   }
 
@@ -86,8 +90,6 @@ class _wholeCakeListState extends State<wholeCakeList> {
                     value: cakeDatabase.cakeDisplay[cakeDatabase.cakeNameList[index]]!,
                     onChanged: (value) {
                       _toggleSwitch(cakeDatabase, index, value);
-                    print("hello");
-                     print(cakeDatabase.cakeDisplay[cakeDatabase.cakeNameList[index]]); 
                       }
                     ),
                   ),

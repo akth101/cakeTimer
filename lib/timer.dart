@@ -433,9 +433,7 @@ class _TimerFunctionState extends State<TimerFunction> {
       return SizedBox(
         width: imageWidth,
         height: imageHeight,
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.file(File(_croppedFile!.path))),
+        child: Image.file(File(_croppedFile!.path)),
       );
     }
     if (_croppedFile != null && _savedFile == null) {
@@ -443,18 +441,14 @@ class _TimerFunctionState extends State<TimerFunction> {
         width: imageWidth,
         height: imageHeight,
         // child: Image.file(File(_croppedFile!.path)),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.file(File(_croppedFile!.path))),
+        child: Image.file(File(_croppedFile!.path)),
       );
     }
     return SizedBox(
       width: imageWidth,
       height: imageHeight,
       // child: Image.file(File(_savedFile!.path)),
-      child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: Image.file(File(_savedFile!.path))),
+      child: Image.file(File(_savedFile!.path)),
     );
   }
 
@@ -622,6 +616,7 @@ class _TimerFunctionState extends State<TimerFunction> {
       _prefs = await SharedPreferences.getInstance();
       setState(() {
         startTime = _prefs.getString('startTimeBackUp_${widget.cakeKey}');
+        print("startTime: $startTime");
       });
       isPhotoTouched = 1;
 
