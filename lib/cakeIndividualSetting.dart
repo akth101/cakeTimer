@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class IndividualSetting extends StatefulWidget {
   final String cakeKey;
   final void Function(int) saveIsNeedToRecovered;
   final void Function(int) fetchSoundSetting;
   final void Function(int, int) isSelectedTimeChanged;
+  final Future<void> Function() loadPreviousTimerState;
 
-  const IndividualSetting({
-    Key? key,
-    required this.cakeKey,
-    required this.saveIsNeedToRecovered,
-    required this.fetchSoundSetting,
-    required this.isSelectedTimeChanged,
-  }) : super(key: key);
+  const IndividualSetting(
+      {Key? key,
+      required this.cakeKey,
+      required this.saveIsNeedToRecovered,
+      required this.fetchSoundSetting,
+      required this.isSelectedTimeChanged,
+      required this.loadPreviousTimerState})
+      : super(key: key);
 
   @override
   State<IndividualSetting> createState() => _IndividualSettingState();
@@ -49,8 +51,6 @@ class _IndividualSettingState extends State<IndividualSetting> {
     await _prefs.setInt('selectedMinute_${widget.cakeKey}', minute);
   }
 
-
-
   ////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////load from shared-preference/////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,6 @@ class _IndividualSettingState extends State<IndividualSetting> {
       soundSetting ??= 0;
     });
   }
-
 
   Future<void> _loadSelectedTime() async {
     _prefs = await SharedPreferences.getInstance();
@@ -111,6 +110,73 @@ class _IndividualSettingState extends State<IndividualSetting> {
     }
   }
 
+  Future<void> receiveUserDefinedStartTime() async {
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Colors.purple,
+            colorScheme: const ColorScheme.light(primary: Colors.purple),
+            buttonTheme:
+                const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+    final TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _convertedHour, minute: _convertedMinute),
+        builder: (context, childWidget) {
+          return MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: childWidget!);
+        });
+    if (selectedDate != null && selectedTime != null) {
+      final DateTime combinedDateTime = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+
+      String? startTime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(combinedDateTime);
+      print("startTime: $startTime");
+
+      if (combinedDateTime.isAfter(DateTime.now())) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('경고'),
+              content: const Text(
+                  '현재 시각 이전으로 지정해주세요'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        _prefs = await SharedPreferences.getInstance();
+        await _prefs.setString('startTime_${widget.cakeKey}', startTime);
+        widget.loadPreviousTimerState();
+      }
+    }
+  }
+
   //여기 고쳐야 되지 않나? super.initState를 위로??
   @override
   void initState() {
@@ -127,8 +193,6 @@ class _IndividualSettingState extends State<IndividualSetting> {
 
   Widget dialogContent(
       BuildContext context, String title, String content, String cakeKey) {
-    late SharedPreferences prefs;
-
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -173,15 +237,21 @@ class _IndividualSettingState extends State<IndividualSetting> {
               onPressed: () {
                 widget.saveIsNeedToRecovered(1);
               },
-              child: const Text('직전 시간 복구')),
+              child: const Text('직전 시각 복구')),
           const SizedBox(height: 20.0), //여백
           ElevatedButton(
             onPressed: () {
               pickTime();
             },
-            child: const Text("해동 시간 변경"),
+            child: const Text("타이머 시간 변경"),
           ),
           const SizedBox(height: 20.0), //여백
+          ElevatedButton(
+              onPressed: () {
+                receiveUserDefinedStartTime();
+              },
+              child: const Text("시작 시각 변경")),
+          const SizedBox(height: 20),
           ElevatedButton(
             //창 닫기 버튼
             onPressed: () {

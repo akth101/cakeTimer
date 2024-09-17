@@ -36,26 +36,27 @@ class _settingsState extends State<settings> {
               ),
               SettingsTile(
                 leading: const Icon(Icons.list),
-                title: const Text("조각케익 목록 설정(개발 중)"), 
+                title: const Text("조각케익 목록 설정(개발 중)"),
                 value: const Text('기기에 저장된 조각케익 목록을 편집할 수 있습니다.'),
-                ),
+              ),
               SettingsTile(
                 leading: const Icon(Icons.warning_amber),
                 title: const Text("임시 리스트 생성"),
-                value: const Text("메인 화면이 올바르게 동작하지 않을 경우, 해동 시작 시각 임시 리스트를 생성합니다."),
+                value: const Text(
+                    "메인 화면이 올바르게 동작하지 않을 경우, 해동 시작 시각 임시 리스트를 생성합니다."),
                 onPressed: (BuildContext context) {
                   Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => EmergencyList()),
-                    );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const EmergencyList()),
+                  );
                 },
-                ),
+              ),
               SettingsTile.navigation(
                 leading: const Icon(Icons.rocket_launch_sharp),
                 title: const Text('개발자 응원하기'),
                 value: const Text('카카오뱅크 3333-03-0417246 고성준'),
               ),
-
             ],
           ),
         ],

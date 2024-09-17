@@ -5,19 +5,18 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timer/main.dart';
 import 'cakeIndividualSetting.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'dart:io';
+import 'cakeDataBase.dart';
 
 class TimerFunction extends StatefulWidget {
   final String cakeKey;
 
-  const TimerFunction(
-      {Key? key,
-      required this.cakeKey,
-      })
-      : super(key: key);
+  const TimerFunction({
+    Key? key,
+    required this.cakeKey,
+  }) : super(key: key);
 
   @override
   State<TimerFunction> createState() => _TimerFunctionState();
@@ -329,9 +328,9 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     if (startTime != null) {
       convertedStartTime = startTime!.substring(0, 16);
-      return Text("Start: $convertedStartTime");
+      return Text("시작 시간: $convertedStartTime");
     }
-    return const Text("Start: ");
+    return const Text("시작 시간: ");
   }
 
   Text showRemainingTime() {
@@ -343,19 +342,30 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     if (isElapseCompleted == 1) {
       return const Text(
-        '해동 완료!',
-        style: TextStyle(fontSize: 20, color: Colors.deepOrange),
+        '해동 완료',
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+        ),
       );
-    } else if (isElapseCompleted == 0 && remainingTime != null) {
+    } else if (isElapseCompleted == 0 &&
+        remainingTime != '' &&
+        remainingTime != null) {
       return Text(
         '남은 시간: $remainingTime',
-        style: const TextStyle(fontSize: 20),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
       );
     }
-    return const Text(
-      '남은 시간: ',
+    return Text(
+      '판매 완료',
       style: TextStyle(
         fontSize: 20,
+        color: Colors.deepOrange.shade400,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -463,8 +473,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                 if (isPhotoTouched == 0) {
                   startTimers();
                   isPhotoTouched = 1;
-                }
-                else if (isPhotoTouched == 1) {
+                } else if (isPhotoTouched == 1) {
                   showAlertPopUp();
                   isPhotoTouched = 0;
                 }
@@ -481,6 +490,7 @@ class _TimerFunctionState extends State<TimerFunction> {
                         saveIsNeedToRecovered: saveIsNeedToRecovered,
                         fetchSoundSetting: fetchSoundSetting,
                         isSelectedTimeChanged: isSelectedTimeChanged,
+                        loadPreviousTimerState: _loadPreviousTimerState,
                       );
                     }));
                 // recoveryTimers();
@@ -638,30 +648,7 @@ class _TimerFunctionState extends State<TimerFunction> {
     _saveRingAlarmSoundOnlyOnce(1);
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   MediaQueryData mediaQueryData = MediaQuery.of(context);
-  //   double screenWidth = mediaQueryData.size.width;
-  //   double screenHeight = mediaQueryData.size.height;
-  //   return Center(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         SizedBox(height: screenWidth / 90),
-  //         _photoArea(screenWidth, screenHeight),
-  //         SizedBox(height: screenWidth / 80),
-  //         showRemainingTime(),
-  //         SizedBox(height: screenWidth / 80),
-  //         // Text('Start : $startTime'),
-  //         showStartTime(),
-  //         //디버깅용! 절대 지우지 말 것!!
-  //         // Text(
-  //         // 'Sset / Sonce / Elapse: $soundSetting, $ringAlarmSoundOnlyOnce, $isElapseCompleted'),
-  //       ],
-  //     ),
-  //   );
-
-    @override
+  @override
   Widget build(BuildContext context) {
     return Consumer<CakeDataBase>(
       builder: (context, cakeDataBase, child) {
@@ -687,5 +674,4 @@ class _TimerFunctionState extends State<TimerFunction> {
       },
     );
   }
-  }
-
+}

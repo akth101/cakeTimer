@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class cakeNameSetting extends StatefulWidget {
-
   final String cakeKey;
 
   const cakeNameSetting({Key? key, required this.cakeKey}) : super(key: key);
@@ -12,7 +11,6 @@ class cakeNameSetting extends StatefulWidget {
 }
 
 class _cakeNameSettingState extends State<cakeNameSetting> {
-
   // SharedPreferences _prefs = await SharedPreferences.getInstance();
   // final SharedPreferences _prefs = await SharedPreferences.getInstance();
   // late SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -25,26 +23,27 @@ class _cakeNameSettingState extends State<cakeNameSetting> {
   }
 
   Future<void> _loadCakeName() async {
-    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      cakeName = _prefs.getString('cakename_${widget.cakeKey}');
+      cakeName = prefs.getString('cakename_${widget.cakeKey}');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-          // FutureBuilder를 사용하여 데이터를 가져와 표시
-          child: FutureBuilder<void>(
-            future: _loadCakeName(), // 비동기 함수를 호출하여 Future 반환
-            builder: (context, snapshot) {
-              return (cakeName != null)
-              ? Text(cakeName!,
-                style: const TextStyle(fontSize: 19),)
+      // FutureBuilder를 사용하여 데이터를 가져와 표시
+      child: FutureBuilder<void>(
+        future: _loadCakeName(), // 비동기 함수를 호출하여 Future 반환
+        builder: (context, snapshot) {
+          return (cakeName != null)
+              ? Text(
+                  cakeName!,
+                  style: const TextStyle(fontSize: 19),
+                )
               : const Text('None');
-            },
-          ),
-        );
+        },
+      ),
+    );
   }
 }
-
