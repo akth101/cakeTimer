@@ -12,96 +12,84 @@ class SconeList extends StatefulWidget {
 }
 
 class _SconeListState extends State<SconeList> {
-
   void removeScone(BreadDataBase breadDataBase, String? sconeName) async {
     String? id = breadDataBase.makalongNameDateConnector[sconeName];
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("sconeName_$id");
     prefs.remove("sconeDisplayOnList_$id");
     prefs.remove("sconeDate_$id");
-    return;
   }
 
   void _toggleSwitch(BreadDataBase breadDataBase, int index, bool value) async {
     setState(() {
       breadDataBase.sconeDisplay[index] = value;
     });
-    breadDataBase.updateBreadDisplay("scone", breadDataBase.sconeName[index] ,value);
+    breadDataBase.updateBreadDisplay("scone", breadDataBase.sconeName[index], value);
   }
 
-@override
-Widget build(BuildContext context) {
-  final breadDatabase = Provider.of<BreadDataBase>(context);
-  return Row(
-    children: [
-      Flexible(
-        flex: 1,
-        child: Column(
-          children: [
-            Container(
-              height: 40,
-            ),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                height: 19,
-                child: Text(
-                  "스콘 리스트",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: breadDatabase.sconeName.length,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(breadDatabase.sconeName[index]),
-                    confirmDismiss: (direction) async {
-                      return await showAlertDialog(context);
-                    },
-                    onDismissed: (direction) async {
-                      removeScone(breadDatabase, breadDatabase.sconeName[index]);
-                      breadDatabase.buildBreadDB();
-                    },
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                    ),
-                    child: ListTile(
-                      title: Text(breadDatabase.sconeName[index]),
-                      tileColor: Colors.grey.shade300,
-                      trailing: Switch(
-                        value: breadDatabase.sconeDisplay[index],
-                        onChanged: (value) {
-                          _toggleSwitch(breadDatabase, index, value);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("스콘 리스트"),
+      ),
+      body: Consumer<BreadDataBase>(
+        builder: (context, breadDatabase, child) {
+          return Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: breadDatabase.sconeName.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            key: Key(breadDatabase.sconeName[index]),
+                            confirmDismiss: (direction) async {
+                              return await showAlertDialog(context);
+                            },
+                            onDismissed: (direction) async {
+                              removeScone(breadDatabase, breadDatabase.sconeName[index]);
+                              breadDatabase.buildBreadDB();
+                            },
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                            child: ListTile(
+                              title: Text(breadDatabase.sconeName[index]),
+                              tileColor: Colors.grey.shade300,
+                              trailing: Switch(
+                                value: breadDatabase.sconeDisplay[index],
+                                onChanged: (value) {
+                                  _toggleSwitch(breadDatabase, index, value);
+                                },
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+              const Flexible(
+                flex: 1,
+                child: BreadAddSetting(kind: "scone"),
+              ),
+            ],
+          );
+        },
       ),
-      // BreadAddSetting 클래스에도 breadDatabase 전달
-      Flexible(
-        flex: 1,
-        child: BreadAddSetting(kind: "scone"),
-      ),
-    ],
-  );
-}
-
+    );
+  }
 
   Future<bool?> showAlertDialog(BuildContext context) {
     return showDialog(

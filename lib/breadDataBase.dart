@@ -30,6 +30,8 @@ class BreadDataBase extends ChangeNotifier {
   List<String> get sconeName => _sconeName;
   List<String> get sconeDate => _sconeDate;
   List<bool> get sconeDisplay => _sconeDisplay;
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
     BreadDataBase._internal() {
     _initialize();
@@ -37,6 +39,13 @@ class BreadDataBase extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await buildBreadDB();
+  }
+
+  Future<void> ensureInitialized() async {
+    if (!_isInitialized) {
+      print("breadDatabase is prepared.");
+      await _initialize();
+    }
   }
 
   Future<String?> loadBreadName(String breadKey, String kind) async {

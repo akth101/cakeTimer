@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:timer/breadAddSetting.dart';
+import 'package:timer/sconeList.dart';
 import 'package:timer/wholeCakeList.dart';
 import 'emergencyList.dart';
+import "package:provider/provider.dart";
+import 'breadDataBase.dart';
 
 class settings extends StatefulWidget {
   const settings({super.key});
@@ -38,6 +42,18 @@ class _settingsState extends State<settings> {
                 leading: const Icon(Icons.list),
                 title: const Text("조각케익 목록 설정(개발 중)"),
                 value: const Text('기기에 저장된 조각케익 목록을 편집할 수 있습니다.'),
+              ),
+              SettingsTile(
+                leading: const Icon(Icons.list),
+                title: const Text("스콘 & 마카롱 목록 설정"),
+                value: const Text('기기에 저장된 스콘 또는 목록을 편집할 수 있습니다.'),
+                onPressed: (BuildContext context) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BreadAddSetting(kind: "scone")),
+                  );
+                },
               ),
               SettingsTile(
                 leading: const Icon(Icons.warning_amber),

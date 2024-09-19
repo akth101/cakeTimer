@@ -11,12 +11,31 @@ import 'settings.dart';
 import 'breadDataBase.dart';
 import 'cakeDataBase.dart';
 
+// void main() async {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (context) => CakeDataBase()),
+//         ChangeNotifierProvider(create: (context) => BreadDataBase()),
+//       ],
+//       child: const MaterialApp(
+//         title: 'Navigator',
+//         home: MyApp(),
+//       ),
+//     ),
+//   );
+// }
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final breadDataBase = BreadDataBase();
+  await breadDataBase.ensureInitialized();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CakeDataBase()),
-        ChangeNotifierProvider(create: (context) => BreadDataBase()),
+        ChangeNotifierProvider.value(value: breadDataBase),
       ],
       child: const MaterialApp(
         title: 'Navigator',

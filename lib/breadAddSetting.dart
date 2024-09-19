@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
-import 'BreadDataBase.dart';
+import 'breadDataBase.dart';
 
 class BreadAddSetting extends StatefulWidget {
   final String kind;
