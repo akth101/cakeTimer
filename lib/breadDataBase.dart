@@ -19,8 +19,8 @@ class BreadDataBase extends ChangeNotifier {
   final List<bool> _makalongDisplay = [];
   final Map<String, String> _sconeNameDateConnector = {};
   final List<String> _sconeName = [];
-  final List<String> _sconeDate = [];
-  final List<bool> _sconeDisplay = [];
+  late List<String> _sconeDate = [];
+  List<bool> _sconeDisplay = [];
 
   Map<String, String> get makalongNameDateConnector => _makalongNameDateConnector;
   List<String> get makalongName => _makalongName;
@@ -117,6 +117,10 @@ class BreadDataBase extends ChangeNotifier {
       //NameList 가나다순 정렬
       _sconeName.sort();
       _makalongName.sort();
+
+ 
+      _sconeDate = List<String>.filled(_sconeName.length, '');
+      _sconeDisplay = List<bool>.filled(_sconeName.length, false);
 
       //scone [Namelist & Datelist & Display] index 일치화 작업
       for (int i = 0; i < _sconeName.length; i++) {
