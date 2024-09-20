@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class BreadDataBase extends ChangeNotifier {
 
@@ -69,7 +70,7 @@ class BreadDataBase extends ChangeNotifier {
       breadDate = prefs.getString("sconeDate_$breadKey");
     }
     else if (kind == "makalong") {
-      breadDate = prefs.getString("makalongName_$breadKey");
+      breadDate = prefs.getString("makalongDate_$breadKey");
     }
     notifyListeners();
     return (breadDate);
@@ -77,20 +78,17 @@ class BreadDataBase extends ChangeNotifier {
 
   Future<bool> loadBreadDisplay(String breadKey, String kind) async {
     final prefs = await SharedPreferences.getInstance();
-    int display = 0;
+    bool display = false;
 
     if (kind == "scone") {
-      display = prefs.getInt("sconeDisplayOnList_$breadKey")!;
+      var value = prefs.get("sconeDisplayOnList_$breadKey");
+      display = (value is bool) ? value : (value == 1);
     }
     else if (kind == "makalong") {
-      display = prefs.getInt("makalongDisplayOnList_$breadKey")!;
+      var value = prefs.get("makalongDisplayOnList_$breadKey");
+      display = (value is bool) ? value : (value == 1);
     }
-    notifyListeners();
-    if (display == 1) {
-      return (true);
-    } else {
-      return (false);
-    }
+    return display;
   }
 
     Future<void> buildBreadDB() async {
@@ -175,15 +173,27 @@ class BreadDataBase extends ChangeNotifier {
 
     Future<void> updateBreadDisplay(String kind, String name, bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    String id = "";
+    String? id;
     if (kind == "scone") {
-      id = sconeNameDateConnector[name]!;
-      await prefs.setInt("sconeDisplayOnList_$id", value ? 1 : 0);
-    } else {
-      id = makalongNameDateConnector[name]!;
-      await prefs.setInt("makalongDisplayOnList_$id", value ? 1 : 0);
+      id = _sconeNameDateConnector[name];
+      if (id != null) {
+        await prefs.setBool("sconeDisplayOnList_$id", value);
+        int index = _sconeName.indexOf(name);
+        if (index != -1) {
+          _sconeDisplay[index] = value;
+        }
+      }
+    } else if (kind == "makalong") {
+      id = _makalongNameDateConnector[name];
+      if (id != null) {
+        await prefs.setBool("makalongDisplayOnList_$id", value);
+        int index = _makalongName.indexOf(name);
+        if (index != -1) {
+          _makalongDisplay[index] = value;
+        }
+      }
     }
-    notifyListeners();
+    notifyListeners(); // Add this line to notify listeners of the change
   }
 
   Future<void> resetAllData() async {
@@ -224,5 +234,32 @@ class BreadDataBase extends ChangeNotifier {
     } catch (e) {
       print("Error in resetAllData: $e"); // Error print
     }
+  }
+
+  Future<void> updateBreadDate(String kind, String name, DateTime newDate) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? id;
+    String formattedDate = DateFormat('yy/MM/dd').format(newDate);
+
+    if (kind == "스콘") {
+      id = _sconeNameDateConnector[name];
+      if (id != null) {
+        await prefs.setString("sconeDate_$id", formattedDate);
+        int index = _sconeName.indexOf(name);
+        if (index != -1) {
+          _sconeDate[index] = formattedDate;
+        }
+      }
+    } else if (kind == "마카롱") {
+      id = _makalongNameDateConnector[name];
+      if (id != null) {
+        await prefs.setString("makalongDate_$id", formattedDate);
+        int index = _makalongName.indexOf(name);
+        if (index != -1) {
+          _makalongDate[index] = formattedDate;
+        }
+      }
+    }
+    notifyListeners();
   }
 }

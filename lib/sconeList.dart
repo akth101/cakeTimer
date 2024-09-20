@@ -18,7 +18,7 @@ class _SconeListState extends State<SconeList> {
       return;
     }
 
-    String? id = breadDataBase.makalongNameDateConnector[sconeName];
+    String? id = breadDataBase.sconeNameDateConnector[sconeName];
     if (id == null) {
       print('Error: id not found for sconeName: $sconeName');
       return;
@@ -31,17 +31,13 @@ class _SconeListState extends State<SconeList> {
       await prefs.remove("sconeDate_$id");
 
       // Update the state or notify listeners
-      breadDataBase.buildBreadDB();
-      setState(() {});
+      await breadDataBase.buildBreadDB();
     } catch (e) {
       print('Error removing scone: $e');
     }
   }
 
   void _toggleSwitch(BreadDataBase breadDataBase, int index, bool value) async {
-    setState(() {
-      breadDataBase.sconeDisplay[index] = value;
-    });
     breadDataBase.updateBreadDisplay("scone", breadDataBase.sconeName[index], value);
   }
 
@@ -71,13 +67,9 @@ class _SconeListState extends State<SconeList> {
               ),
               ElevatedButton(
                 onPressed: () => _showResetConfirmationDialog(context),
-                style: ElevatedButton.styleFrom(
-                  // primary: Colors.red,
-                  // onPrimary: Colors.white,
-                ),
                 child: const Text('Reset All Data'),
               ),
-              const SizedBox(height: 20), // Add some padding at the bottom
+              const SizedBox(height: 20),
             ],
           );
         },
@@ -97,8 +89,12 @@ class _SconeListState extends State<SconeList> {
       key: Key(breadDatabase.sconeName[index]),
       confirmDismiss: (direction) async => await showAlertDialog(context),
       onDismissed: (direction) async {
-        removeScone(breadDatabase, breadDatabase.sconeName[index]);
-        breadDatabase.buildBreadDB();
+        final removedName = breadDatabase.sconeName[index];
+        await removeScone(breadDatabase, removedName);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$removedName removed')),
+        );
+        setState(() {}); // Trigger a rebuild of the widget tree
       },
       background: _buildDismissibleBackground(),
       child: _buildListTile(breadDatabase, index),
