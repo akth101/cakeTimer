@@ -431,7 +431,7 @@ class _TimerFunctionState extends State<TimerFunction> {
         setState(() {
           _croppedFile = croppedFile;
           String? imagePath =
-              _croppedFile != null ? _croppedFile!.path : null; //이거 삼항 연산자임
+              _croppedFile?.path; //이거 삼항 연산자임
           _saveImagePath(imagePath);
         });
       }

@@ -198,4 +198,33 @@ class CakeDataBase extends ChangeNotifier {
     _elapsedCakes.insert(newIndex, item);
     notifyListeners();
   }
+
+  Future<void> removeCake(String? id) async {
+    if (id == null) {
+      // print('Error: id is null');
+      return;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove("cakename_$id");
+      await prefs.remove("displayonlist_$id");
+      await prefs.remove("isElapseCompleted_$id");
+      await prefs.remove("selectedHour_$id");
+      await prefs.remove("selectedMinute_$id");
+      await prefs.remove("soundSetting_$id");
+      await prefs.remove("imagePath_$id");
+      await prefs.remove("ringAlarmSoundOnlyOnce_$id");
+      await prefs.remove("startTimeBackUp_$id");
+      await prefs.remove("startTime_$id");
+      
+      // Comment out success message
+      // print('Cake removed successfully');
+      
+      // Notify listeners or update state
+      notifyListeners();
+    } catch (e) {
+      print('Error removing cake: $e');
+    }
+  }
 }

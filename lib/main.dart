@@ -1,12 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:timer/cakeWidget.dart';
 import 'package:timer/wholeCakeList.dart';
 import 'wholeCakeElapsing.dart';
 import 'wholeCakeElapsed.dart';
 import 'sconeAndMakalong.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'settings.dart';
 import 'breadDataBase.dart';
 import 'cakeDataBase.dart';

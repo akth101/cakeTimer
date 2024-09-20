@@ -55,7 +55,7 @@ class _CakeAddSettingState extends State<CakeAddSetting> {
       if (croppedFile != null) {
         setState(() {
           _croppedFile = croppedFile;
-          imagePath = _croppedFile != null ? _croppedFile!.path : null;
+          imagePath = _croppedFile?.path;
         });
       }
     }

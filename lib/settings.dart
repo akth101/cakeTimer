@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:timer/breadAddSetting.dart';
-import 'package:timer/sconeList.dart';
-import 'package:timer/wholeCakeList.dart';
 import 'emergencyList.dart';
-import "package:provider/provider.dart";
-import 'breadDataBase.dart';
 
 class settings extends StatefulWidget {
   const settings({super.key});

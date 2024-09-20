@@ -60,7 +60,7 @@ class _BreadAddSettingState extends State<BreadAddSetting> {
                   // 오늘 날짜 저장
                   DateTime date = DateTime.now();
                   String formattedDate = DateFormat('yy/MM/dd').format(date);
-                  await prefs.setString('${widget.kind}Date_$id', formattedDate);
+                  await prefs.setString('${widget.kind}Date_{$id}', formattedDate);
 
                   // breadDB 업데이트
                   breadDB.buildBreadDB();

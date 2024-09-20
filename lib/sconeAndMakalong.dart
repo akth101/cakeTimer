@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'sconeList.dart';
 import 'makalongList.dart';
-import 'breadDataBase.dart';
 
 class DataTableExample extends StatelessWidget {
   final String bread;
@@ -116,7 +115,7 @@ class _sconeAndMakalongState extends State<sconeAndMakalong> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => (SconeList()), // 이동할 페이지
+                          builder: (context) => (const SconeList()), // 이동할 페이지
                         ),
                       );
                     },
@@ -135,7 +134,7 @@ class _sconeAndMakalongState extends State<sconeAndMakalong> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => (Makalonglist()), // 이동할 페이지
+                          builder: (context) => (const Makalonglist()), // 이동할 페이지
                         ),
                       );
                 }, child: const Text("마카롱 관리")),
