@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class cakeNameSetting extends StatefulWidget {
   final String cakeKey;
 
-  const cakeNameSetting({Key? key, required this.cakeKey}) : super(key: key);
+  const cakeNameSetting({super.key, required this.cakeKey});
 
   @override
   State<cakeNameSetting> createState() => _cakeNameSettingState();

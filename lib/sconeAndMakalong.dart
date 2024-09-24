@@ -5,7 +5,7 @@ import 'makalongList.dart';
 import 'breadDataBase.dart';
 
 class sconeAndMakalong extends StatelessWidget {
-  const sconeAndMakalong({Key? key}) : super(key: key);
+  const sconeAndMakalong({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class sconeAndMakalong extends StatelessWidget {
 }
 
 class SconeSection extends StatelessWidget {
-  const SconeSection({Key? key}) : super(key: key);
+  const SconeSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class SconeSection extends StatelessWidget {
 }
 
 class MakalongSection extends StatelessWidget {
-  const MakalongSection({Key? key}) : super(key: key);
+  const MakalongSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ void _navigateToBreadList(BuildContext context, Widget listPage) {
 class BreadDataTable extends StatelessWidget {
   final String breadType;
 
-  const BreadDataTable({Key? key, required this.breadType}) : super(key: key);
+  const BreadDataTable({super.key, required this.breadType});
 
   @override
   Widget build(BuildContext context) {

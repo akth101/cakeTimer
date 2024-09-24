@@ -5,9 +5,9 @@ class cakeWidget extends StatefulWidget {
   final String cakeKey;
 
   const cakeWidget({
-    Key? key,
+    super.key,
     required this.cakeKey,
-  }) : super(key: key);
+  });
 
   @override
   State<cakeWidget> createState() => _cakeWidgetState();

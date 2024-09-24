@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cakeIndividualSetting.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
+// import 'package:assets_audio_player/assets_audio_player.dart';
 import 'dart:io';
 import 'cakeDataBase.dart';
 
@@ -14,9 +14,9 @@ class TimerFunction extends StatefulWidget {
   final String cakeKey;
 
   const TimerFunction({
-    Key? key,
+    super.key,
     required this.cakeKey,
-  }) : super(key: key);
+  });
 
   @override
   State<TimerFunction> createState() => _TimerFunctionState();
@@ -56,7 +56,7 @@ class _TimerFunctionState extends State<TimerFunction> {
   //Instance
   late SharedPreferences _prefs;
   final ImagePicker picker = ImagePicker();
-  final assetsAudioPlayer = AssetsAudioPlayer();
+  // final assetsAudioPlayer = AssetsAudioPlayer();
 
   //temp
   late bool isCurrentPassedTheTargetTime = true;
@@ -305,9 +305,10 @@ class _TimerFunctionState extends State<TimerFunction> {
 
     _saveIsElapseCompleted(0);
     _saveRingAlarmSoundOnlyOnce(0);
-    assetsAudioPlayer.stop();
+    // Commented out audio stop
+    // assetsAudioPlayer.stop();
 
-    //시간 관련 변수들 빈 문자열로 초기화
+    //시간 관련 변수��� 빈 문자열로 초기화
     setState(() {
       startTime = null;
       remainingTime = '';
@@ -337,7 +338,8 @@ class _TimerFunctionState extends State<TimerFunction> {
     if (isElapseCompleted == 1 &&
         soundSetting == 1 &&
         ringAlarmSoundOnlyOnce == 0) {
-      playAlarmSound();
+      // Commented out playAlarmSound call
+      // playAlarmSound();
     }
 
     if (isElapseCompleted == 1) {
@@ -412,19 +414,19 @@ class _TimerFunctionState extends State<TimerFunction> {
           IOSUiSettings(
             title: 'Cropper',
           ),
-          WebUiSettings(
-            context: context,
-            presentStyle: CropperPresentStyle.dialog,
-            boundary: const CroppieBoundary(
-              width: 520,
-              height: 520,
-            ),
-            viewPort:
-                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
-            enableExif: true,
-            enableZoom: true,
-            showZoomer: true,
-          ),
+          // WebUiSettings(
+          //   context: context,
+          //   presentStyle: CropperPresentStyle.dialog,
+          //   boundary: const CroppieBoundary(
+          //     width: 520,
+          //     height: 520,
+          //   ),
+          //   viewPort:
+          //       const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+          //   enableExif: true,
+          //   enableZoom: true,
+          //   showZoomer: true,
+          // ),
         ],
       );
       if (croppedFile != null) {
@@ -641,12 +643,13 @@ class _TimerFunctionState extends State<TimerFunction> {
     _saveSoundSetting(value);
   }
 
-  Future<void> playAlarmSound() async {
-    assetsAudioPlayer.open(
-      Audio("assets/audios/alarm_sound.wav"),
-    );
-    _saveRingAlarmSoundOnlyOnce(1);
-  }
+  // Commented out playAlarmSound function
+  // Future<void> playAlarmSound() async {
+  //   assetsAudioPlayer.open(
+  //     Audio("assets/audios/alarm_sound.wav"),
+  //   );
+  //   _saveRingAlarmSoundOnlyOnce(1);
+  // }
 
   @override
   Widget build(BuildContext context) {

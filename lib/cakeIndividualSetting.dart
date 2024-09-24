@@ -10,13 +10,12 @@ class IndividualSetting extends StatefulWidget {
   final Future<void> Function() loadPreviousTimerState;
 
   const IndividualSetting(
-      {Key? key,
+      {super.key,
       required this.cakeKey,
       required this.saveIsNeedToRecovered,
       required this.fetchSoundSetting,
       required this.isSelectedTimeChanged,
-      required this.loadPreviousTimerState})
-      : super(key: key);
+      required this.loadPreviousTimerState});
 
   @override
   State<IndividualSetting> createState() => _IndividualSettingState();

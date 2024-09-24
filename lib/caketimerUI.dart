@@ -8,9 +8,9 @@ class CakeTimerUI extends StatefulWidget {
   final String cakeKey;
 
   const CakeTimerUI({
-    Key? key,
+    super.key,
     required this.cakeKey,
-  }) : super(key: key);
+  });
 
   @override
   CakeTimerState createState() => CakeTimerState();

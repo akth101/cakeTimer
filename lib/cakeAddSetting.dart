@@ -37,19 +37,19 @@ class _CakeAddSettingState extends State<CakeAddSetting> {
           IOSUiSettings(
             title: 'Cropper',
           ),
-          WebUiSettings(
-            context: context,
-            presentStyle: CropperPresentStyle.dialog,
-            boundary: const CroppieBoundary(
-              width: 520,
-              height: 520,
-            ),
-            viewPort:
-                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
-            enableExif: true,
-            enableZoom: true,
-            showZoomer: true,
-          ),
+          // WebUiSettings(
+          //   context: context,
+          //   presentStyle: CropperPresentStyle.dialog,
+          //   boundary: const CroppieBoundary(
+          //     width: 520,
+          //     height: 520,
+          //   ),
+          //   viewPort:
+          //       const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+          //   enableExif: true,
+          //   enableZoom: true,
+          //   showZoomer: true,
+          // ),
         ],
       );
       if (croppedFile != null) {
