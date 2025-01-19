@@ -45,7 +45,14 @@ class _SconeListState extends State<SconeList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("스콘 리스트"),
+        title: const Text(
+          "스콘 리스트",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.teal,
       ),
       body: Consumer<BreadDataBase>(
         builder: (context, breadDatabase, child) {
@@ -58,15 +65,28 @@ class _SconeListState extends State<SconeList> {
                       flex: 1,
                       child: _buildSconeListView(breadDatabase),
                     ),
-                    const Flexible(
+                    Flexible(
                       flex: 1,
-                      child: BreadAddSetting(kind: "scone"),
+                      child: Card(
+                        margin: const EdgeInsets.all(16),
+                        elevation: 8,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: BreadAddSetting(kind: "scone"),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
               ElevatedButton(
                 onPressed: () => _showResetConfirmationDialog(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
                 child: const Text('Reset All Data'),
               ),
               const SizedBox(height: 20),
@@ -111,12 +131,18 @@ class _SconeListState extends State<SconeList> {
   }
 
   Widget _buildListTile(BreadDataBase breadDatabase, int index) {
-    return ListTile(
-      title: Text(breadDatabase.sconeName[index]),
-      tileColor: Colors.grey.shade300,
-      trailing: Switch(
-        value: breadDatabase.sconeDisplay[index],
-        onChanged: (value) => _toggleSwitch(breadDatabase, index, value),
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), // Changed from 16 to 30 for more circular edges
+      child: ListTile(
+        title: Text(breadDatabase.sconeName[index], style: const TextStyle(fontWeight: FontWeight.bold)),
+        tileColor: Colors.grey.shade200, // Reduced brightness from white to a lighter grey
+        trailing: Switch(
+          value: breadDatabase.sconeDisplay[index],
+          onChanged: (value) => _toggleSwitch(breadDatabase, index, value),
+          activeColor: Colors.teal, // Set the active color to teal
+        ),
       ),
     );
   }
@@ -133,7 +159,7 @@ class _SconeListState extends State<SconeList> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          content: const Text('정말로 삭제하시겠습니까?'),
+          content: const Text('정로 삭제하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {

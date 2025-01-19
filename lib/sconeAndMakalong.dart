@@ -9,69 +9,93 @@ class sconeAndMakalong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen size
+    final screenSize = MediaQuery.of(context).size;
+    final isLandscape = screenSize.width > screenSize.height;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "스콘 & 마카롱",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: Colors.teal,
+        elevation: 0,
       ),
-      body: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SconeSection(),
-          SizedBox(width: 200),
-          MakalongSection(),
-          // Expanded(
-          //   flex: 1,
-          //   child: SconeSection()
-          //   ),
-          // // SizedBox(width: 20),
-          // Expanded(child: MakalongSection()),
-        ],
+      body: Container(
+        color: Colors.grey[100],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: isLandscape
+                ? const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: BreadSection(breadType: "스콘", icon: Icons.bakery_dining)),
+                      SizedBox(width: 16),
+                      Expanded(child: BreadSection(breadType: "마카롱", icon: Icons.cookie)),
+                    ],
+                  )
+                : const Column(
+                    children: [
+                      BreadSection(breadType: "스콘", icon: Icons.cake),
+                      SizedBox(height: 16),
+                      BreadSection(breadType: "마카롱", icon: Icons.cookie),
+                    ],
+                  ),
+          ),
+        ),
       ),
     );
   }
 }
 
-class SconeSection extends StatelessWidget {
-  const SconeSection({super.key});
+class BreadSection extends StatelessWidget {
+  final String breadType;
+  final IconData icon;
+
+  const BreadSection({super.key, required this.breadType, required this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 20),
-        const BreadDataTable(breadType: "스콘"),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () => _navigateToBreadList(context, const SconeList()),
-          child: const Text("스콘 관리"),
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 30, color: Colors.teal),
+                const SizedBox(width: 8),
+                Text(
+                  breadType,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            BreadDataTable(breadType: breadType),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _navigateToBreadList(context, breadType == "스콘" ? const SconeList() : const MakalongList()),
+                icon: const Icon(Icons.edit),
+                label: Text("$breadType 관리"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-}
-
-class MakalongSection extends StatelessWidget {
-  const MakalongSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 20),
-        const BreadDataTable(breadType: "마카롱"),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () => _navigateToBreadList(context, const MakalongList()),
-          child: const Text("마카롱 관리"),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -113,47 +137,16 @@ class BreadDataTable extends StatelessWidget {
           }
         }
 
-        return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: DataTable(
-            columnSpacing: 20,
-            columns: _buildColumns(),
-            rows: _buildRows(context, breadDatabase, names, dates, displayedIndices),
-          ),
+        return Column(
+          children: displayedIndices.map((index) => 
+            BreadItem(
+              name: names[index],
+              date: dates[index],
+              onTap: () => _updateDate(context, breadDatabase, names[index]),
+            )
+          ).toList(),
         );
       },
-    );
-  }
-
-  List<DataColumn> _buildColumns() {
-    return [
-      DataColumn(
-        label: Text(
-          breadType,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-      const DataColumn(
-        label: Text(
-          '진열 날짜',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-    ];
-  }
-
-  List<DataRow> _buildRows(BuildContext context, BreadDataBase breadDatabase, List<String> names, List<String> dates, List<int> displayedIndices) {
-    return List.generate(
-      displayedIndices.length,
-      (index) => DataRow(
-        cells: [
-          DataCell(Text(names[displayedIndices[index]])),
-          DataCell(
-            Text(dates[displayedIndices[index]]),
-            onTap: () => _updateDate(context, breadDatabase, names[displayedIndices[index]]),
-          ),
-        ],
-      ),
     );
   }
 
@@ -161,11 +154,41 @@ class BreadDataTable extends StatelessWidget {
     DateTime today = DateTime.now();
     breadDatabase.updateBreadDate(breadType, name, today);
 
-    // Show a snackbar to confirm the update
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$name의 진열 날짜가 오늘로 업데이트되었습니다.'),
         duration: const Duration(seconds: 2),
+        backgroundColor: Colors.teal,
+      ),
+    );
+  }
+}
+
+class BreadItem extends StatelessWidget {
+  final String name;
+  final String date;
+  final VoidCallback onTap;
+
+  const BreadItem({super.key, required this.name, required this.date, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: ListTile(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(date, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.calendar_today, color: Colors.teal),
+          onPressed: onTap,
+        ),
       ),
     );
   }

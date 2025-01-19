@@ -4,8 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class BreadDataBase extends ChangeNotifier {
-
-    static final BreadDataBase _instance = BreadDataBase._internal();
+  static final BreadDataBase _instance = BreadDataBase._internal();
 
   factory BreadDataBase() {
     return _instance;
@@ -22,7 +21,8 @@ class BreadDataBase extends ChangeNotifier {
   List<String> _sconeDate = [];
   List<bool> _sconeDisplay = [];
 
-  Map<String, String> get makalongNameDateConnector => _makalongNameDateConnector;
+  Map<String, String> get makalongNameDateConnector =>
+      _makalongNameDateConnector;
   List<String> get makalongName => _makalongName;
   List<String> get makalongDate => _makalongDate;
   List<bool> get makalongDisplay => _makalongDisplay;
@@ -33,7 +33,7 @@ class BreadDataBase extends ChangeNotifier {
   final bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-    BreadDataBase._internal() {
+  BreadDataBase._internal() {
     _initialize();
   }
 
@@ -54,8 +54,7 @@ class BreadDataBase extends ChangeNotifier {
 
     if (kind == "scone") {
       breadName = prefs.getString("sconeName_$breadKey");
-    }
-    else if (kind == "makalong") {
+    } else if (kind == "makalong") {
       breadName = prefs.getString("makalongName_$breadKey");
     }
     notifyListeners();
@@ -68,8 +67,7 @@ class BreadDataBase extends ChangeNotifier {
 
     if (kind == "scone") {
       breadDate = prefs.getString("sconeDate_$breadKey");
-    }
-    else if (kind == "makalong") {
+    } else if (kind == "makalong") {
       breadDate = prefs.getString("makalongDate_$breadKey");
     }
     notifyListeners();
@@ -83,15 +81,14 @@ class BreadDataBase extends ChangeNotifier {
     if (kind == "scone") {
       var value = prefs.get("sconeDisplayOnList_$breadKey");
       display = (value is bool) ? value : (value == 1);
-    }
-    else if (kind == "makalong") {
+    } else if (kind == "makalong") {
       var value = prefs.get("makalongDisplayOnList_$breadKey");
       display = (value is bool) ? value : (value == 1);
     }
     return display;
   }
 
-    Future<void> buildBreadDB() async {
+  Future<void> buildBreadDB() async {
     print("Starting buildBreadDB method"); // Debug print
 
     final prefs = await SharedPreferences.getInstance();
@@ -154,7 +151,8 @@ class BreadDataBase extends ChangeNotifier {
       bool display = await loadBreadDisplay(makalongKey, "makalong");
       newMakalongDate.add(date ?? '');
       newMakalongDisplay.add(display);
-      print("Makalong $makalongName - Date: $date, Display: $display"); // Debug print
+      print(
+          "Makalong $makalongName - Date: $date, Display: $display"); // Debug print
     }
 
     // Update the class properties with the new data
@@ -171,7 +169,7 @@ class BreadDataBase extends ChangeNotifier {
     notifyListeners();
   }
 
-    Future<void> updateBreadDisplay(String kind, String name, bool value) async {
+  Future<void> updateBreadDisplay(String kind, String name, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     String? id;
     if (kind == "scone") {
@@ -201,15 +199,15 @@ class BreadDataBase extends ChangeNotifier {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Remove all keys related to scones and makalongs
       final keys = prefs.getKeys();
       for (String key in keys) {
-        if (key.startsWith('sconeName_') || 
-            key.startsWith('sconeDisplayOnList_') || 
+        if (key.startsWith('sconeName_') ||
+            key.startsWith('sconeDisplayOnList_') ||
             key.startsWith('sconeDate_') ||
-            key.startsWith('makalongName_') || 
-            key.startsWith('makalongDisplayOnList_') || 
+            key.startsWith('makalongName_') ||
+            key.startsWith('makalongDisplayOnList_') ||
             key.startsWith('makalongDate_')) {
           await prefs.remove(key);
           print("Removed key: $key"); // Debug print
@@ -236,7 +234,8 @@ class BreadDataBase extends ChangeNotifier {
     }
   }
 
-  Future<void> updateBreadDate(String kind, String name, DateTime newDate) async {
+  Future<void> updateBreadDate(
+      String kind, String name, DateTime newDate) async {
     final prefs = await SharedPreferences.getInstance();
     String? id;
     String formattedDate = DateFormat('yy/MM/dd').format(newDate);
